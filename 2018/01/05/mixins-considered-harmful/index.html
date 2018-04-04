@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="目前团队在维护的项目中，主要使用的前端框架是 Vue.js。最近组内同学在学习 React 的时候，问了我一个问题：Vue.js 的 mixins 在 React 中是如何实现和使用的？ 当时自己回忆了一下之前两个 React 的项目经历，给出的的回答是：mixins 本质上是用于代码的复用，自己在写 React 的时候，基本上是通过抽象通用组件和函数、props实现的代码复用，没太考虑过使用 m">
+<meta name="keywords" content="React">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mixins 被认为是有害的">
+<meta property="og:url" content="http://lizhiyao.github.io/2018/01/05/mixins-considered-harmful/index.html">
+<meta property="og:site_name" content="丁香园记">
+<meta property="og:description" content="目前团队在维护的项目中，主要使用的前端框架是 Vue.js。最近组内同学在学习 React 的时候，问了我一个问题：Vue.js 的 mixins 在 React 中是如何实现和使用的？ 当时自己回忆了一下之前两个 React 的项目经历，给出的的回答是：mixins 本质上是用于代码的复用，自己在写 React 的时候，基本上是通过抽象通用组件和函数、props实现的代码复用，没太考虑过使用 m">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-01-08T01:03:29.908Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mixins 被认为是有害的">
+<meta name="twitter:description" content="目前团队在维护的项目中，主要使用的前端框架是 Vue.js。最近组内同学在学习 React 的时候，问了我一个问题：Vue.js 的 mixins 在 React 中是如何实现和使用的？ 当时自己回忆了一下之前两个 React 的项目经历，给出的的回答是：mixins 本质上是用于代码的复用，自己在写 React 的时候，基本上是通过抽象通用组件和函数、props实现的代码复用，没太考虑过使用 m">
+
+
+
+
+
+
+  <link rel="canonical" href="http://lizhiyao.github.io/2018/01/05/mixins-considered-harmful/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Mixins 被认为是有害的 | 丁香园记</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96917833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-96917833-1');
+</script>
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5476bfd46e559a87ee9508b21a534eb9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">丁香园记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+  
+  
+  
+    
+      
+    
+    <a href="https://github.com/lizhiyao" class="github-corner" target="_blank" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#222; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg>
+    
+      </a>
+    
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2018/01/05/mixins-considered-harmful/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="志遥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="丁香园记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Mixins 被认为是有害的</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-05T09:54:34+08:00">2018-01-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/01/05/mixins-considered-harmful/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/01/05/mixins-considered-harmful/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/01/05/mixins-considered-harmful/" class="leancloud_visitors" data-flag-title="Mixins 被认为是有害的">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>目前团队在维护的项目中，主要使用的前端框架是 Vue.js。最近组内同学在学习 React 的时候，问了我一个问题：Vue.js 的 <a href="https://cn.vuejs.org/v2/guide/mixins.html" target="_blank" rel="noopener">mixins</a> 在 React 中是如何实现和使用的？</p>
+<p>当时自己回忆了一下之前两个 React 的项目经历，给出的的回答是：mixins 本质上是用于代码的复用，自己在写 React 的时候，基本上是通过抽象通用组件和函数、props实现的代码复用，没太考虑过使用 mixins。</p>
+<p>事后反复思考这个问题，觉得自己给的答案并不能让自己满意，于是又去学习了一个。学习过程中发现了 React 官博的一篇文章<a href="https://reactjs.org/blog/2016/07/13/mixins-considered-harmful.html" target="_blank" rel="noopener">Mixins Considered Harmful</a>，看过之后基本解决了心中的困惑。</p>
+<p>现将原文翻译如下：</p>
+<p>“如何在不同的组件之间进行代码复用？”是人们在学习 React 时首先要问的问题之一，我们的答案始终是使用组件组合来重用代码。你可以定义一个组件并在其他几个组件中使用它。</p>
+<p>某种确定的模式通过用组合的方式进行解决并不总是显而易见的。React 受函数式编程的影响，但进入了以面向对象库为主的领域。Facebook 内部和外部的工程师很难放弃他们习惯的模式。</p>
+<p>为了简化最初的采用和学习，我们在 React 中加入了一些“逃生”功能。mixin 系统就是其中一种逃生方法，它的目标是当你不知道如何通过组合解决问题时，给你另外一种在组件之间重用代码的方法。</p>
+<p>React 已经发布三年了，前端领域的技术在这三年中也发生了翻天覆地的变化。现在多个用于构建用户界面的前端框架都采用了类似于 React 的组件模型。使用基于继承的组合声明式的构建用户界面，不再是新鲜事物。我们对 React 组件模型也更加自信，我们在内部和社区都看到了它的许多创造性的用途。</p>
+<p>在这篇文章中，我们将思考通常是由 mixin 引起的问题。然后，我们将为相同的用例提出几种替代模式。我们发现随着项目代码复杂度的增加，这些替代的模式的可扩展性比使用 mixin 更好。</p>
+<hr>
+<h1 id="为什么-Mixins-在-React-中不被推荐使用"><a href="#为什么-Mixins-在-React-中不被推荐使用" class="headerlink" title="为什么 Mixins 在 React 中不被推荐使用"></a>为什么 Mixins 在 React 中不被推荐使用</h1><p>在 Facebook，React 的使用量已经从几个组件增长到了成千上万个。这给了我们一个去思考人们该如何更好的使用 React 的窗口。由于声明性渲染和自上而下的数据流，许多团队在采用 React 去实现一些新功能时，能够解决了很多之前难以去解决的 bug。</p>
+<p>然而，使用 React 的一些代码不可避免地变得难以理解。有时候，React 团队会看到开发者不敢去碰某些项目中的组件。这些组件维护起来很容易出 bug，对新开发人员造成负担，最终组件会变得让创建这个组件的人都难以去维护。这种巨大的开发成本大部分是由 mixin 引起的。当时，我并没有在Facebook工作，但是在写下了我可怕的 mixin 之后，我得出了相同的<a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750" target="_blank" rel="noopener">结论—Mixins已经，组合永生</a>。</p>
+<p>这并不意味着 mixin 本身就是坏的。开发者们成功地在不同的语言和范例中使用 mixin，包括在一些函数式编程语言中。在 Facebook，我们广泛使用 Hack 中与 mixin 非常相似的特性。但是，我们依旧认为 mixin 在 React 代码库中是不必要的和有问题的。下面的内容是我们这样认为的原因。</p>
+<h2 id="Mixin-引入了隐式依赖关系"><a href="#Mixin-引入了隐式依赖关系" class="headerlink" title="Mixin 引入了隐式依赖关系"></a>Mixin 引入了隐式依赖关系</h2><p>有时一个组件依赖于mixin中定义的某个方法，比如getClassName（）。有时候是相反的，mixin在组件上调用renderHeader（）方法。 JavaScript是一种动态语言，所以很难执行或记录这些依赖关系。</p>
+<p>Mixin打破了常见且通常安全的假设，即可以通过在组件文件中搜索其出现来重命名状态键或方法。你可能会写一个有状态的组件，然后你的同事可能会添加一个读取这个状态的mixin。在几个月内，您可能需要将该状态移至父组件，以便与兄弟组件共享。你会记得更新mixin来读取道具吗？如果现在其他组件也使用这个mixin呢？</p>
+<p>这些隐含的依赖性使新团队成员难以贡献代码库。一个组件的render（）方法可能会引用一些未在该类上定义的方法。移除安全吗？也许它是在一个mixin中定义的。但是其中哪一个呢？您需要向上滚动到mixin列表，打开每个文件，然后查找此方法。更糟的是，mixin可以指定他们自己的mixin，所以搜索可以很深入。</p>
+<p>mixin经常依赖于其他的mixin，而删除其中的一个会打破另一个。在这些情况下，告诉数据如何进出mixin是非常棘手的，以及它们的依赖关系图是什么样的。与组件不同，mixin不构成层次结构：它们被夷为平地并在相同的名称空间中运行。</p>
+<h2 id="Mixins导致名称冲突"><a href="#Mixins导致名称冲突" class="headerlink" title="Mixins导致名称冲突"></a>Mixins导致名称冲突</h2><p>不能保证两个特定的mixin可以一起使用。例如，如果FluxListenerMixin定义了handleChange（）和WindowSizeMixin定义了handleChange（），则不能一起使用它们。你也不能在你自己的组件上定义一个带有这个名字的方法。</p>
+<p>如果你控制混入代码，这不是什么大不了的事情。如果发生冲突，可以在其中一个mixin上重命名该方法。然而，这很棘手，因为一些组件或其他mixin可能已经直接调用这个方法，你也需要找到并修复这些调用。</p>
+<p>如果你的名字与第三方包中的mixin有冲突，你不能只重命名一个方法。相反，您必须在您的组件上使用尴尬的方法名称以避免冲突。</p>
+<p>mixin作者的情况并不好。即使向mixin添加一个新的方法总是一个潜在的重大改变，因为一个名称相同的方法可能已经存在于一些使用它的组件，直接或通过另一个mixin。一旦写入，mixin很难删除或更改。不好的想法不会被重构，因为重构风险太大。</p>
+<h1 id="Mixin导致复杂的滚雪球"><a href="#Mixin导致复杂的滚雪球" class="headerlink" title="Mixin导致复杂的滚雪球"></a>Mixin导致复杂的滚雪球</h1><p>即使mixin开始简单，随着时间的推移，它们往往会变得复杂。下面的例子是基于我在代码库中看到的真实场景。</p>
+<p>组件需要一些状态来跟踪鼠标悬停。为了保持这个逻辑可重用，你可以将handleMouseEnter（），handleMouseLeave（）和isHovering（）提取到一个HoverMixin中。接下来，有人需要实施一个工具提示。他们不想复制HoverMixin中的逻辑，以便创建使用HoverMixin的TooltipMixin。 TooltipMixin读取HoverMixin在其componentDidUpdate（）中提供的isHovering（），并显示或隐藏工具提示。</p>
+<p>几个月后，有人想让工具提示方向可配置。为了避免代码重复，他们添加了一个名为getTooltipOptions（）的新的可选方法到TooltipMixin。到目前为止，显示popovers的组件也使用HoverMixin。然而，popovers需要不同的悬停延迟。为了解决这个问题，有人增加了对可选的getHoverOptions（）方法的支持，并在TooltipMixin中实现它。那些混合现在是紧密耦合的。</p>
+<p>没有新的要求，这很好。但是这个解决方案不能很好地扩展。如果你想支持在单个组件中显示多个工具提示呢？你不能在一个组件中定义两次相同的mixin。如果工具提示需要在导游中自动显示，而不是悬停，怎么办？祝你好运解耦TooltipMixin从HoverMixin。如果您需要支持悬停区域和工具提示锚点位于不同组件的情况，该怎么办？你不能轻易地把混入到父组件中的状态提升起来。与组件不同，mixin不会自然地适应这种变化。</p>
+<p>每一个新的要求都会让混音变得更难理解。使用相同mixin的组件越来越与时间耦合。任何新的能力被添加到使用该mixin的所有组件。如果没有复制代码或在mixin之间引入更多的依赖性和间接性，就没有办法拆分mixin的“更简单”的部分。逐渐地，封装边界逐渐消失，由于很难改变或移除现有的混合，他们不断变得抽象，直到没人理解它们是如何工作的。</p>
+<p>这些与我们在React之前构建应用程序的问题是一样的。我们发现它们是通过声明性渲染，自顶向下的数据流和封装组件来解决的。在Facebook上，我们一直在迁移我们的代码以使用替代模式来混合，我们对结果普遍感到满意。你可以阅读下面的模式。</p>
+<hr>
+<h1 id="从Mixin迁移"><a href="#从Mixin迁移" class="headerlink" title="从Mixin迁移"></a>从Mixin迁移</h1><p>让我们清楚地说明mixin在技术上并不被弃用。 如果你使用React.createClass（），你可以继续使用它们。 我们只是说他们不适合我们，所以我们不会推荐将来使用他们。</p>
+<p>下面的每个部分对应于我们在Facebook代码库中找到的mixin使用模式。 对于他们每个人，我们描述这个问题和一个我们认为比mixin更好的解决方案。 这些例子是用ES5编写的，但是一旦你不需要mixin，你可以根据需要切换到ES6类。</p>
+<p>我们希望你觉得这个列表有帮助。 请让我们知道，如果我们错过了重要的用例，所以我们可以修改列表或被证明是错误的！</p>
+<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>PureRenderMixin是最常用的混合类型之一。 当道具和状态与以前的道具和状态相似时，你可能会在某些组件中使用它来防止不必要的重新渲染：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> PureRenderMixin = <span class="built_in">require</span>(<span class="string">'react-addons-pure-render-mixin'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Button = React.createClass(&#123;</span><br><span class="line">  mixins: [PureRenderMixin],</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>要表达同样没有mixin，你可以直接使用shallowCompare函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> shallowCompare = <span class="built_in">require</span>(<span class="string">'react-addons-shallow-compare'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Button = React.createClass(&#123;</span><br><span class="line">  shouldComponentUpdate: <span class="function"><span class="keyword">function</span>(<span class="params">nextProps, nextState</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> shallowCompare(<span class="keyword">this</span>, nextProps, nextState);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>如果你使用一个自定义的mixin以不同的算法实现一个shouldComponentUpdate函数，我们建议从一个模块导出这个单一的函数，并直接从你的组件中调用它。</p>
+<p>我们知道更多的打字可能会令人讨厌。 对于最常见的情况，我们计划在下一个小版本中引入一个名为React.PureComponent的新基类。 它使用与PureRenderMixin相同的浅度比较。</p>
+<h2 id="订阅和副作用"><a href="#订阅和副作用" class="headerlink" title="订阅和副作用"></a>订阅和副作用</h2><p>我们遇到的第二种最常见的mixin类型是将一个React组件订阅到第三方数据源的mixin。 无论这个数据源是Flux Store还是Rx Observable，这个模式都非常相似：订阅是在componentDidMount中创建的，在componentWillUnmount中销毁，并且更改处理程序调用this.setState（）。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> SubscriptionMixin = &#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      comments: DataSource.getComments()</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  componentDidMount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    DataSource.addChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  componentWillUnmount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    DataSource.removeChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  handleChange: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">      comments: DataSource.getComments()</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> CommentList = React.createClass(&#123;</span><br><span class="line">  mixins: [SubscriptionMixin],</span><br><span class="line"></span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Reading comments from state managed by mixin.</span></span><br><span class="line">    <span class="keyword">var</span> comments = <span class="keyword">this</span>.state.comments;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &#123;comments.map(<span class="function"><span class="keyword">function</span>(<span class="params">comment</span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Comment</span> <span class="attr">comment</span>=<span class="string">&#123;comment&#125;</span> <span class="attr">key</span>=<span class="string">&#123;comment.id&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        &#125;)&#125;</span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = CommentList;</span><br></pre></td></tr></table></figure>
+<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><p>如果只有一个组件订阅了这个数据源，那么将订阅逻辑嵌入组件中就好了。 避免过早抽象。</p>
+<p>如果有几个组件使用这个mixin来订阅一个数据源，避免重复的一个好方法就是使用一个叫做“higher-order components”的模式。 这听起来有些吓人，所以我们将仔细看看这种模式是如何从组件模型中自然产生的。</p>
+<h3 id="更高级的组件解释"><a href="#更高级的组件解释" class="headerlink" title="更高级的组件解释"></a>更高级的组件解释</h3><p>让我们忘记一秒钟的反应。 考虑这两个函数添加和乘数，记录结果，因为他们这样做：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addAndLog</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> result = x + y;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'result:'</span>, result);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">multiplyAndLog</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> result = x * y;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'result:'</span>, result);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这两个函数并不是非常有用，但是它们帮助我们演示了一种可以稍后应用于组件的模式。</p>
+<p>假设我们想从这些函数中提取日志逻辑而不改变他们的签名。 我们应该怎么做？ 一个优雅的解决方案是编写一个更高阶的函数，也就是一个将函数作为参数并返回一个函数的函数。</p>
+<p>再一次，这听起来比实际上更吓人：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">withLogging</span>(<span class="params">wrappedFunction</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Return a function with the same API...</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ... that calls the original function</span></span><br><span class="line">    <span class="keyword">var</span> result = wrappedFunction(x, y);</span><br><span class="line">    <span class="comment">// ... but also logs its result!</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'result:'</span>, result);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>withLogging高级函数让我们可以在没有日志语句的情况下编写add和multiply，然后将它们包装到addAndLog和multiplyAndLog中，并使用与之前完全相同的签名：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> x + y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">multiply</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> x * y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">withLogging</span>(<span class="params">wrappedFunction</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> result = wrappedFunction(x, y);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'result:'</span>, result);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Equivalent to writing addAndLog by hand:</span></span><br><span class="line"><span class="keyword">var</span> addAndLog = withLogging(add);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Equivalent to writing multiplyAndLog by hand:</span></span><br><span class="line"><span class="keyword">var</span> multiplyAndLog = withLogging(multiply);</span><br></pre></td></tr></table></figure>
+<p>高阶组件是一个非常相似的模式，但应用于React中的组件。 我们将通过两步来从mixin中应用这个转换。</p>
+<p>作为第一步，我们将把我们的CommentList组件分成两部分，一个孩子和一个父母。 孩子只会关心评论。 家长将通过道具设置订阅并将最新的数据传递给孩子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This is a child component.</span></span><br><span class="line"><span class="comment">// It only renders the comments it receives as props.</span></span><br><span class="line"><span class="keyword">var</span> CommentList = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Note: now reading from props rather than state.</span></span><br><span class="line">    <span class="keyword">var</span> comments = <span class="keyword">this</span>.props.comments;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &#123;comments.map(<span class="function"><span class="keyword">function</span>(<span class="params">comment</span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Comment</span> <span class="attr">comment</span>=<span class="string">&#123;comment&#125;</span> <span class="attr">key</span>=<span class="string">&#123;comment.id&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        &#125;)&#125;</span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// This is a parent component.</span></span><br><span class="line"><span class="comment">// It subscribes to the data source and renders &lt;CommentList /&gt;.</span></span><br><span class="line"><span class="keyword">var</span> CommentListWithSubscription = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      comments: DataSource.getComments()</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  componentDidMount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    DataSource.addChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  componentWillUnmount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    DataSource.removeChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  handleChange: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">      comments: DataSource.getComments()</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// We pass the current state as props to CommentList.</span></span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">CommentList</span> <span class="attr">comments</span>=<span class="string">&#123;this.state.comments&#125;</span> /&gt;</span>;</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml">&#125;);</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">module.exports = CommentListWithSubscription;</span></span><br></pre></td></tr></table></figure>
+<p>只剩下最后一步了。</p>
+<p>还记得我们如何使用Logging（）取得一个函数并返回包含它的另一个函数？ 我们可以将相似的模式应用于React组件。</p>
+<p>我们将编写一个名为withSubscription（WrappedComponent）的新函数。 它的参数可以是任何React组件。 我们将通过CommentList作为WrappedComponent，但是我们也可以将SubScription（）应用到代码库中的任何其他组件。</p>
+<p>这个函数会返回另一个组件。 返回的组件将管理订阅并使用当前数据呈现<wrappedcomponent>。</wrappedcomponent></p>
+<p>我们称这种模式为“高阶组件”。</p>
+<p>构图发生在React渲染级别，而不是直接函数调用。 这就是为什么使用createClass（）定义包装组件是ES6类还是一个函数并不重要。 如果WrappedComponent是一个React组件，那么通过withSubscription（）创建的组件可以呈现它。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This function takes a component...</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">withSubscription</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...and returns another component...</span></span><br><span class="line">  <span class="keyword">return</span> React.createClass(&#123;</span><br><span class="line">    getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> &#123;</span><br><span class="line">        comments: DataSource.getComments()</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    componentDidMount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">// ... that takes care of the subscription...</span></span><br><span class="line">      DataSource.addChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    componentWillUnmount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      DataSource.removeChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    handleChange: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">        comments: DataSource.getComments()</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">// ... and renders the wrapped component with the fresh data!</span></span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> <span class="attr">comments</span>=<span class="string">&#123;this.state.comments&#125;</span> /&gt;</span>;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  &#125;);</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>现在我们可以通过应用CommentList来申明CommentListWithSubscription：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> CommentList = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> comments = <span class="keyword">this</span>.props.comments;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &#123;comments.map(<span class="function"><span class="keyword">function</span>(<span class="params">comment</span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Comment</span> <span class="attr">comment</span>=<span class="string">&#123;comment&#125;</span> <span class="attr">key</span>=<span class="string">&#123;comment.id&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        &#125;)&#125;</span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// withSubscription() returns a new component that</span></span><br><span class="line"><span class="comment">// is subscribed to the data source and renders</span></span><br><span class="line"><span class="comment">// &lt;CommentList /&gt; with up-to-date data.</span></span><br><span class="line"><span class="keyword">var</span> CommentListWithSubscription = withSubscription(CommentList);</span><br><span class="line"></span><br><span class="line"><span class="comment">// The rest of the app is interested in the subscribed component</span></span><br><span class="line"><span class="comment">// so we export it instead of the original unwrapped CommentList.</span></span><br><span class="line"><span class="built_in">module</span>.exports = CommentListWithSubscription;</span><br></pre></td></tr></table></figure>
+<h3 id="再探解决方案"><a href="#再探解决方案" class="headerlink" title="再探解决方案"></a>再探解决方案</h3><p>现在我们可以更好地理解高阶组件，下面再看看不涉及mixins的完整解决方案。 内嵌评论有一些小的更改：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">withSubscription</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createClass(&#123;</span><br><span class="line">    getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> &#123;</span><br><span class="line">        comments: DataSource.getComments()</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    componentDidMount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      DataSource.addChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    componentWillUnmount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      DataSource.removeChangeListener(<span class="keyword">this</span>.handleChange);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    handleChange: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">        comments: DataSource.getComments()</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">// Use JSX spread syntax to pass all props and state down automatically.</span></span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...this.props</span>&#125; &#123;<span class="attr">...this.state</span>&#125; /&gt;</span>;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  &#125;);</span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">// Optional change: convert CommentList to a functional component</span></span><br><span class="line"><span class="xml">// because it doesn't use lifecycle hooks or state.</span></span><br><span class="line"><span class="xml">function CommentList(props) &#123;</span></span><br><span class="line"><span class="xml">  var comments = props.comments;</span></span><br><span class="line"><span class="xml">  return (</span></span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &#123;comments.map(function(comment) &#123;</span><br><span class="line">        return &lt;Comment comment=&#123;comment&#125; key=&#123;comment.id&#125; /&gt;</span><br><span class="line">      &#125;)&#125;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Instead of declaring CommentListWithSubscription,</span><br><span class="line">// we export the wrapped component right away.</span><br><span class="line">module.exports = withSubscription(CommentList);</span><br></pre></td></tr></table></figure>
+<p>高阶组件是一个强大的模式。 如果要进一步自定义其行为，可以将其他参数传递给它们。 毕竟，它们甚至不是React的一个特征。 它们只是接收组件并返回包装它们的组件的函数。</p>
+<p>像任何解决方案一样，高阶元件也有自己的陷阱。 例如，如果大量使用refs，则可能会注意到将某些东西包装到高阶组件中会将ref更改为指向包装组件。 在实践中，我们不鼓励使用ref来进行组件通信，所以我们不认为这是一个大问题。 将来，我们可能会考虑将ref转发给React来解决这个问题。</p>
+<h2 id="渲染逻辑"><a href="#渲染逻辑" class="headerlink" title="渲染逻辑"></a>渲染逻辑</h2><p>我们在代码库中发现的mixin的下一个最常见的用例是在组件之间共享渲染逻辑。</p>
+<p>这是这种模式的典型例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RowMixin = &#123;</span><br><span class="line">  <span class="comment">// Called by components from render()</span></span><br><span class="line">  renderHeader: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div className=<span class="string">'row-header'</span>&gt;</span><br><span class="line">        &lt;h1&gt;</span><br><span class="line">          &#123;<span class="keyword">this</span>.getHeaderText() <span class="comment">/* Defined by components */</span>&#125;</span><br><span class="line">        &lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>div&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> UserRow = React.createClass(&#123;</span><br><span class="line">  mixins: [RowMixin],</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Called by RowMixin.renderHeader()</span></span><br><span class="line">  getHeaderText: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.props.user.fullName;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &#123;<span class="keyword">this</span>.renderHeader() <span class="comment">/* Defined by RowMixin */</span>&#125;</span><br><span class="line">        &lt;h2&gt;&#123;<span class="keyword">this</span>.props.user.biography&#125;&lt;<span class="regexp">/h2&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>div&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>多个组件可能共享RowMixin来渲染标题，并且每个组件都需要定义getHeaderText（）。</p>
+<h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h3><p>如果你看到一个mixin中的渲染逻辑，那么就是抽出一个组件的时候了！</p>
+<p>而不是RowMixin，我们将定义一个<rowheader>组件。 我们还将用React中的顶层数据流的标准机制替换定义getHeaderText（）方法的约定：传递道具。</rowheader></p>
+<p>最后，由于这些组件当前都不需要生命周期钩子或状态，我们可以将它们声明为简单的函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">RowHeader</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div className=<span class="string">'row-header'</span>&gt;</span><br><span class="line">      &lt;h1&gt;&#123;props.text&#125;&lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">    &lt;/</span>div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">UserRow</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;RowHeader text=&#123;props.user.fullName&#125; /&gt;</span><br><span class="line">      &lt;h2&gt;&#123;props.user.biography&#125;&lt;<span class="regexp">/h2&gt;</span></span><br><span class="line"><span class="regexp">    &lt;/</span>div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过使用Flow和TypeScript这样的工具，支持组件的依赖关系是显式的，易于替换和可执行的。</p>
+<blockquote>
+<p>注意：<br>将组件定义为函数不是必需的。 使用生命周期钩子和状态也没什么问题 - 它们是一流的React功能。<br>我们在这个例子中使用了功能组件，因为它们更容易阅读，我们不需要那些额外的功能，但类将工作得很好。</p>
+</blockquote>
+<h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p>我们发现的另一组mixin是提供和使用React上下文的助手。 上下文是一个实验性的不稳定的特征，有一定的问题，将来可能会改变它的API。 我们不建议您使用它，除非您确信没有其他方法可以解决您的问题。</p>
+<p>不过，如果你今天已经使用上下文，你可能已经隐藏它的使用mixin这样的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RouterMixin = &#123;</span><br><span class="line">  contextTypes: &#123;</span><br><span class="line">    router: React.PropTypes.object.isRequired</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The mixin provides a method so that components</span></span><br><span class="line">  <span class="comment">// don't have to use the context API directly.</span></span><br><span class="line">  push: <span class="function"><span class="keyword">function</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.context.router.push(path)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Link = React.createClass(&#123;</span><br><span class="line">  mixins: [RouterMixin],</span><br><span class="line"></span><br><span class="line">  handleClick: <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">    e.stopPropagation();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// This method is defined in RouterMixin.</span></span><br><span class="line">    <span class="keyword">this</span>.push(<span class="keyword">this</span>.props.to);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;a onClick=&#123;<span class="keyword">this</span>.handleClick&#125;&gt;</span><br><span class="line">        &#123;<span class="keyword">this</span>.props.children&#125;</span><br><span class="line">      &lt;<span class="regexp">/a&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">module.exports = Link;</span></span><br></pre></td></tr></table></figure>
+<h3 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h3><p>我们同意，在上下文API稳定之前，隐藏使用组件的上下文使用是个好主意。 不过，我们建议使用更高阶的组件，而不是mixin。</p>
+<p>让包装组件从上下文中获取一些东西，并用道具传递给包装组件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">withRouter</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createClass(&#123;</span><br><span class="line">    contextTypes: &#123;</span><br><span class="line">      router: React.PropTypes.object.isRequired</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">// The wrapper component reads something from the context</span></span><br><span class="line">      <span class="comment">// and passes it down as a prop to the wrapped component.</span></span><br><span class="line">      <span class="keyword">var</span> router = <span class="keyword">this</span>.context.router;</span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...this.props</span>&#125; <span class="attr">router</span>=<span class="string">&#123;router&#125;</span> /&gt;</span>;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  &#125;);</span></span><br><span class="line"><span class="xml">&#125;;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">var Link = React.createClass(&#123;</span></span><br><span class="line"><span class="xml">  handleClick: function(e) &#123;</span></span><br><span class="line"><span class="xml">    e.stopPropagation();</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    // The wrapped component uses props instead of context.</span></span><br><span class="line"><span class="xml">    this.props.router.push(this.props.to);</span></span><br><span class="line"><span class="xml">  &#125;,</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  render: function() &#123;</span></span><br><span class="line"><span class="xml">    return (</span></span><br><span class="line">      &lt;a onClick=&#123;this.handleClick&#125;&gt;</span><br><span class="line">        &#123;this.props.children&#125;</span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="xml">    );</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml">&#125;);</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">// Don't forget to wrap the component!</span></span><br><span class="line"><span class="xml">module.exports = withRouter(Link);</span></span><br></pre></td></tr></table></figure>
+<p>如果您使用的是仅提供混音功能的第三方库，我们鼓励您向他们提交链接到该帖子的问题，以便他们可以提供更高级别的组件。 与此同时，您可以用完全相同的方式自行创建一个更高阶的组件。</p>
+<h2 id="效用方法"><a href="#效用方法" class="headerlink" title="效用方法"></a>效用方法</h2><p>有时，mixin仅用于在组件之间共享实用程序功能：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ColorMixin = &#123;</span><br><span class="line">  getLuminance(color) &#123;</span><br><span class="line">    <span class="keyword">var</span> c = <span class="built_in">parseInt</span>(color, <span class="number">16</span>);</span><br><span class="line">    <span class="keyword">var</span> r = (c &amp; <span class="number">0xFF0000</span>) &gt;&gt; <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">var</span> g = (c &amp; <span class="number">0x00FF00</span>) &gt;&gt; <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">var</span> b = (c &amp; <span class="number">0x0000FF</span>);</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">0.299</span> * r + <span class="number">0.587</span> * g + <span class="number">0.114</span> * b);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Button = React.createClass(&#123;</span><br><span class="line">  mixins: [ColorMixin],</span><br><span class="line"></span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> theme = <span class="keyword">this</span>.getLuminance(<span class="keyword">this</span>.props.color) &gt; <span class="number">160</span> ? <span class="string">'dark'</span> : <span class="string">'light'</span>;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div className=&#123;theme&#125;&gt;</span><br><span class="line">        &#123;<span class="keyword">this</span>.props.children&#125;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    )</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
+<h3 id="解决方案-4"><a href="#解决方案-4" class="headerlink" title="解决方案"></a>解决方案</h3><p>将实用函数放入常规JavaScript模块并导入它们。 这也使得更容易测试它们或者在你的组件之外使用它们：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getLuminance = <span class="built_in">require</span>(<span class="string">'../utils/getLuminance'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Button = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> theme = getLuminance(<span class="keyword">this</span>.props.color) &gt; <span class="number">160</span> ? <span class="string">'dark'</span> : <span class="string">'light'</span>;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div className=&#123;theme&#125;&gt;</span><br><span class="line">        &#123;<span class="keyword">this</span>.props.children&#125;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    )</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
+<h2 id="其他用例"><a href="#其他用例" class="headerlink" title="其他用例"></a>其他用例</h2><p>有时候人们会使用mixins来选择性地将日志记录添加到某些组件的生命周期钩子中。在将来，我们打算提供一个官方的DevTools API，它可以让你在不触及组件的情况下实现类似的东西。然而，这仍然是一项正在进行的工作。如果你严重依赖日志混合进行调试，你可能想要继续使用这些混合。</p>
+<p>如果你不能用一个组件，一个更高级的组件或者一个实用程序模块来完成某件事情，那么React应该意味着它应该提供这个开箱即用的功能。提出一个问题，告诉我们你的mixins用例，我们将帮助你考虑替代方案，或者实现你的功能请求。</p>
+<p>Mixins在传统意义上不被弃用。您可以继续使用它们与React.createClass（），因为我们不会进一步改变它。最终，随着ES6类获得更多的采用，并且React中的可用性问题得到解决，我们可能会将React.createClass（）分割成单独的包，因为大多数人不需要它。即使在这种情况下，你的旧mixins仍然会继续工作。</p>
+<p>我们相信，上述替代方案对绝大多数情况都更好，我们邀请您尝试在不使用mixin的情况下编写React应用程序。</p>
+<hr>
+<h1 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h1><ul>
+<li><a href="http://raganwald.com/2016/07/16/why-are-mixins-considered-harmful.html" target="_blank" rel="noopener">Why Are Mixins Considered Harmful?</a> </li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/dxy_notes_qrcode.jpg" alt="志遥 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>微信扫一扫，我在丁香园记公众号等你</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/React/" rel="tag"># React</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/03/farewell/" rel="next" title="告别是为了彼此变得更好---SPA 前后端彻底分离的探索之路">
+                <i class="fa fa-chevron-left"></i> 告别是为了彼此变得更好---SPA 前后端彻底分离的探索之路
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/25/code-review/" rel="prev" title="code review">
+                code review <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="志遥" />
+            
+              <p class="site-author-name" itemprop="name">志遥</p>
+              <p class="site-description motion-element" itemprop="description">Find what u really love, and let it kill U ~</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">76</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">42</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/lizhiyao" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.instagram.com/_lizhiyao/" target="_blank" title="Instagram" rel="external nofollow"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dancerlzy@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/dancerlzy/" target="_blank" title="知乎" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://juejin.im/user/57b15330c4c971005487322f" target="_blank" title="掘金" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么-Mixins-在-React-中不被推荐使用"><span class="nav-number">1.</span> <span class="nav-text">为什么 Mixins 在 React 中不被推荐使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mixin-引入了隐式依赖关系"><span class="nav-number">1.1.</span> <span class="nav-text">Mixin 引入了隐式依赖关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mixins导致名称冲突"><span class="nav-number">1.2.</span> <span class="nav-text">Mixins导致名称冲突</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mixin导致复杂的滚雪球"><span class="nav-number">2.</span> <span class="nav-text">Mixin导致复杂的滚雪球</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从Mixin迁移"><span class="nav-number">3.</span> <span class="nav-text">从Mixin迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化"><span class="nav-number">3.1.</span> <span class="nav-text">性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案"><span class="nav-number">3.1.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#订阅和副作用"><span class="nav-number">3.2.</span> <span class="nav-text">订阅和副作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更高级的组件解释"><span class="nav-number">3.2.2.</span> <span class="nav-text">更高级的组件解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#再探解决方案"><span class="nav-number">3.2.3.</span> <span class="nav-text">再探解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#渲染逻辑"><span class="nav-number">3.3.</span> <span class="nav-text">渲染逻辑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-2"><span class="nav-number">3.3.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context"><span class="nav-number">3.4.</span> <span class="nav-text">Context</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-3"><span class="nav-number">3.4.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#效用方法"><span class="nav-number">3.5.</span> <span class="nav-text">效用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-4"><span class="nav-number">3.5.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他用例"><span class="nav-number">3.6.</span> <span class="nav-text">其他用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相关阅读"><span class="nav-number">4.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">志遥</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G3UH8HdORUYIKeHXHP6J4lEM-gzGzoHsz", "PYiTH8lrUw7uQJ4Fm83lfIEA");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! See more at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see here how to solve it: https://github.com/theme-next/hexo-leancloud-counter-security. \n But you also can use LeanCloud without security, by set \'security\' option to \'false\'.');
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="这份文字是根据近期团队做来问丁香医生 SPA和丁香医生小程序加载速度优化的经历整理而成。 微信扫一扫，体验丁香医生小程序： 效果古人有一句话叫做：治感冒看疗效。既然是关于速度优化的，我们就先来看一下优化的效果。 来问丁香医生 Chrome Network选取了访问量较大的首页和我的页面进行随机取样，通过下图可以看到首页的加载时间从 5.1s 下降到 1.67s，我的页面从 2.92s 下降到 1.">
+<meta name="keywords" content="前端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初级前端项目加载速度优化">
+<meta property="og:url" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/index.html">
+<meta property="og:site_name" content="丁香园记">
+<meta property="og:description" content="这份文字是根据近期团队做来问丁香医生 SPA和丁香医生小程序加载速度优化的经历整理而成。 微信扫一扫，体验丁香医生小程序： 效果古人有一句话叫做：治感冒看疗效。既然是关于速度优化的，我们就先来看一下优化的效果。 来问丁香医生 Chrome Network选取了访问量较大的首页和我的页面进行随机取样，通过下图可以看到首页的加载时间从 5.1s 下降到 1.67s，我的页面从 2.92s 下降到 1.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/gh_c6b61ac99cd3_344.jpg">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/h5/优化前首页加载时间.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/h5/优化前我的页面加载时间.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/h5/优化后首页加载时间.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/h5/优化后我的页面加载时间.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/h5/来问%20H5%20全国范围加载速度.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/WX20180102-120522@2x.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/WX20180102-120929@2x.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/WX20180102-122445@2x.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/来问%20H5%20加载优化.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/优化前包体积大小-Gzipped.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/个人中心代码分离-Gzipped.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/小程序%20页面加载优化.png">
+<meta property="og:updated_time" content="2018-01-03T10:05:58.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初级前端项目加载速度优化">
+<meta name="twitter:description" content="这份文字是根据近期团队做来问丁香医生 SPA和丁香医生小程序加载速度优化的经历整理而成。 微信扫一扫，体验丁香医生小程序： 效果古人有一句话叫做：治感冒看疗效。既然是关于速度优化的，我们就先来看一下优化的效果。 来问丁香医生 Chrome Network选取了访问量较大的首页和我的页面进行随机取样，通过下图可以看到首页的加载时间从 5.1s 下降到 1.67s，我的页面从 2.92s 下降到 1.">
+<meta name="twitter:image" content="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/gh_c6b61ac99cd3_344.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>初级前端项目加载速度优化 | 丁香园记</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96917833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-96917833-1');
+</script>
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5476bfd46e559a87ee9508b21a534eb9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">丁香园记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+  
+  
+  
+    
+      
+    
+    <a href="https://github.com/lizhiyao" class="github-corner" target="_blank" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#222; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg>
+    
+      </a>
+    
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2018/01/02/loading-speed-optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="志遥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="丁香园记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">初级前端项目加载速度优化</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-02T08:37:22+08:00">2018-01-02</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/01/02/loading-speed-optimization/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/01/02/loading-speed-optimization/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/01/02/loading-speed-optimization/" class="leancloud_visitors" data-flag-title="初级前端项目加载速度优化">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这份文字是根据近期团队做<a href="https://ask.dxy.com/ama/index" target="_blank" rel="noopener">来问丁香医生 SPA</a>和丁香医生小程序加载速度优化的经历整理而成。</p>
+<p>微信扫一扫，体验丁香医生小程序：<br><img src="gh_c6b61ac99cd3_344.jpg" alt="优化前首页加载时间"></p>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p>古人有一句话叫做：治感冒看疗效。既然是关于速度优化的，我们就先来看一下优化的效果。</p>
+<h2 id="来问丁香医生"><a href="#来问丁香医生" class="headerlink" title="来问丁香医生 "></a><a href="https://ask.dxy.com/ama/index" target="_blank" rel="noopener">来问丁香医生 </a></h2><h3 id="Chrome-Network"><a href="#Chrome-Network" class="headerlink" title="Chrome Network"></a>Chrome Network</h3><p>选取了访问量较大的首页和我的页面进行随机取样，通过下图可以看到首页的加载时间从 5.1s 下降到 1.67s，我的页面从 2.92s 下降到 1.82s。</p>
+<h4 id="优化前"><a href="#优化前" class="headerlink" title="优化前"></a>优化前</h4><p>首页<br><img src="h5/优化前首页加载时间.png" alt="优化前首页加载时间"></p>
+<p>我的页面<br><img src="h5/优化前我的页面加载时间.png" alt="优化前我的页面加载时间"></p>
+<h4 id="优化后"><a href="#优化后" class="headerlink" title="优化后"></a>优化后</h4><p>首页<br><img src="h5/优化后首页加载时间.png" alt="优化后首页加载时间"></p>
+<p>我的页面<br><img src="h5/优化后我的页面加载时间.png" alt="优化后我的页面加载时间"></p>
+<h3 id="mta"><a href="#mta" class="headerlink" title="mta"></a><a href="http://mta.qq.com/" target="_blank" rel="noopener">mta</a></h3><p>2018.01.02 早上的页面响应速度数据，目前国内各省份平均加载速度在 0.99~2s（虽然没有达到 1s 内加载，但是以目前业务量级，这样的速度是可以被接受的）：<br><img src="h5/来问 H5 全国范围加载速度.png" alt="来问 H5 全国范围加载速度"></p>
+<h3 id="Google-PageSpeed-Insights-和-pagespeed-insights-Chrome-插件"><a href="#Google-PageSpeed-Insights-和-pagespeed-insights-Chrome-插件" class="headerlink" title="Google PageSpeed Insights 和 pagespeed insights Chrome 插件"></a><a href="https://developers.google.com/speed/pagespeed/insights/" target="_blank" rel="noopener">Google PageSpeed Insights</a> 和 <a href="https://chrome.google.com/webstore/search/pagespeed%20insights?utm_source=chrome-ntp-icon" target="_blank" rel="noopener">pagespeed insights Chrome 插件</a></h3><p>前者这是 Google 的一个评分工具，最开始做优化时用它测了一些页面的分数。后来发现了后面这些 Chrome 插件。让我困惑的是同样的页面这几个工具给出的结果分数都不一样。<a href="https://www.taobao.com/" target="_blank" rel="noopener">手淘</a> 的首屏加载速度挺快的，但是跑出来的分数也不高。最终我只是选择性的参考一下工具给出来的建议，忽视了其给出的评分。</p>
+<h2 id="丁香医生小程序"><a href="#丁香医生小程序" class="headerlink" title="丁香医生小程序"></a>丁香医生小程序</h2><p>对于小程序，做了优化后得到部门同学的反馈是这样的：</p>
+<p><img src="WX20180102-120522@2x.png" alt=""><br><img src="WX20180102-120929@2x.png" alt=""></p>
+<p>具体的数据指标如何呢？虽然目前没有特别好用的性能检测方式（包括官方提供的性能检测工具在内），最终我们组的舒哲同学还是利用官方提供的工具做了一下简单的数据对比，数据如下：<br><img src="WX20180102-122445@2x.png" alt=""></p>
+<p>在不影响产品需求正常迭代的前提下，两个项目的优化断断续续持续了两周。整体上来说，本次优化的性价比还是较高的。</p>
+<hr>
+<h1 id="为什么做加载速度优化？"><a href="#为什么做加载速度优化？" class="headerlink" title="为什么做加载速度优化？"></a>为什么做加载速度优化？</h1><p>直接原因很简单：慢。虽然说页面加载速度并没有达到慢的让人无法忍受，但至少没办法让人说加载很快。</p>
+<p>既然明知道加载速度不快，那之前在干什么？为什么不早早的去做优化呢？</p>
+<p>这是一个好问题，我曾经在深夜中问过自己多次。我给自己的答案是：首先，要承认自身技术水平和经验的限制，如果是一个在前端战场上身经百战的人一直在负责项目的迭代，或许情况会比优化前好一些。 其次，之前整个产品线的项目一直处于探索和快速迭代中，前端研发资源基本上总是处在被需求排满的状态下，产品需求快速上线的优先级是最高的。正是因为产品的整体节奏稍微放缓了一些，才让研发资源有精力来做一些优化。</p>
+<hr>
+<h1 id="为什么说是前端响应速度优化，而不是前后端？"><a href="#为什么说是前端响应速度优化，而不是前后端？" class="headerlink" title="为什么说是前端响应速度优化，而不是前后端？"></a>为什么说是前端响应速度优化，而不是前后端？</h1><p>因为我是亲眼看着这两个项目逐渐长大的，单从前端工程的角度来审视，在自己的认知范围内，早就认为项目中有一些地方是需要优化的。坚定了先从前端动手的想法，是因为读了<a href="https://book.douban.com/subject/3132277/" target="_blank" rel="noopener">《高性能网站建设指南》</a>这本书，书中提到了一个性能黄金法则（Performance Golden Rule）：只有 10% ~ 20% 的最终用户响应时间是花在下载 HTML 文档上。话说到这个份上，还犹豫什么呢，先从前端项目开始撸起袖子加油干吧。</p>
+<p>之前去 Qcon 等技术大会上，听过几次关于加载速度的分享。比如：使用 HTTP2，整站级别的前后端优化等。方案确实是好的方案，但具体是否要应用到自己团队实际项目中，还得根据执行成本、团队技术储备等维度从长计议。</p>
+<hr>
+<h1 id="为什么说是初级？"><a href="#为什么说是初级？" class="headerlink" title="为什么说是初级？"></a>为什么说是初级？</h1><p>因为深感自己在前端性能优化这个领域还有很长的路要走。</p>
+<hr>
+<h1 id="如何做的？"><a href="#如何做的？" class="headerlink" title="如何做的？"></a>如何做的？</h1><p>前戏这么长，终于可以开始了。</p>
+<h2 id="来问丁香医生-SPA"><a href="#来问丁香医生-SPA" class="headerlink" title="来问丁香医生 SPA"></a>来问丁香医生 SPA</h2><p>先看图（绿色部分为已在项目中应用的方法）：<br><img src="来问 H5 加载优化.png" alt="来问 H5 加载优化"></p>
+<h3 id="实现游客机制"><a href="#实现游客机制" class="headerlink" title="实现游客机制"></a>实现游客机制</h3><p>最初来问丁香医生是基于微信服务号做的，当时的设计是用户通过服务号菜单进入应用时，会自动帮他进行跳转登录，登录成功后服务端再重定向回到应用。登录这个环节，虽然与项目代码层面的加载优化关系不大，但是从用户体验的角度这样的流程是不好的。因为相比于直接打开页面，用户需要等更长的时间，并且会看到两次页面加载的进度条。从产品的角度，一些页面是不需要用户登录即可访问的。综上，将登录流程后置，让用户可以直接进入应用这件事情，于情于理都是必须要做的。</p>
+<p>改造流程大致为：梳理产品现有流程 -&gt; 用户进入应用时取消强制登录 -&gt; 在产品流程核心环节进行用户登录状态判断并引导登录。具体实现细节不再赘述。</p>
+<h3 id="减小资源包体积"><a href="#减小资源包体积" class="headerlink" title="减小资源包体积"></a>减小资源包体积</h3><p>实现了游客机制后，接下来就是对应用的资源包动手了。因为通过 Chrome 开发者工具的 Network 可以看出，下载 CSS、JS 资源还是占用了不少时间的。下图是减小资源包体积之前的情况：</p>
+<p>优化前包体积大小-Gzipped<br><img src="优化前包体积大小-Gzipped.png" alt="优化前包体积大小-Gzipped"></p>
+<h4 id="精简第三方依赖"><a href="#精简第三方依赖" class="headerlink" title="精简第三方依赖"></a>精简第三方依赖</h4><p>想要减少资源体积大小，首先需要知道哪些资源时应该/可以被删除的。由于项目是基于 Webpack 构建的，因此可以使用<a href="https://github.com/webpack-contrib/webpack-bundle-analyzer" target="_blank" rel="noopener">Webpack Bundle Analyzer</a>进行分析Webpack 生成的包体组成。然后根据实际情况进行移除就好。</p>
+<p>精简了第三方依赖后，启动应用时需要下载的资源体积还是挺大的。此时就需要使用 Webpack 的代码分离和懒加载进行进一步的优化。</p>
+<h4 id="代码分离"><a href="#代码分离" class="headerlink" title="代码分离"></a><a href="https://doc.webpack-china.org/guides/code-splitting/" target="_blank" rel="noopener">代码分离</a></h4><p>代码分离的思想就是化整为零，将代码分离到不同的 bundle 中，然后可以按需加载或并行加载这些小的 bundle 文件。</p>
+<p>代码分离主要是利用 Webpack 的动态导入</p>
+<p>Webpack 目前有三种常用的代码分离方法：</p>
+<ul>
+<li>入口起点：使用 entry 配置手动地分离代码。（优势：简单、直观。劣势：配置繁琐、同一份代码可能会被引入到各个 bundle 中、不灵活，并不能将核心应用程序逻辑进行动态拆分代码）</li>
+<li>防止重复：使用 CommonsChunkPlugin 去重和分离 chunk。</li>
+<li>动态导入：通过模块的内联函数调用来分离代码。</li>
+</ul>
+<p>经过对比之后，最终选择了动态导入的方式。</p>
+<h4 id="动态导入-dynamic-imports"><a href="#动态导入-dynamic-imports" class="headerlink" title="动态导入(dynamic imports)"></a>动态导入(dynamic imports)</h4><p>webpack 提供了两个类似的技术：</p>
+<ul>
+<li>import() 语法（推荐，符合 ECMAScript 提案）</li>
+<li>require.ensure（webpack 钦定）</li>
+</ul>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分离 lodash</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> _ = <span class="keyword">await</span> <span class="keyword">import</span>(<span class="comment">/* webpackChunkName: "lodash" */</span> <span class="string">'lodash'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="懒加载"><a href="#懒加载" class="headerlink" title="懒加载"></a><a href="https://doc.webpack-china.org/guides/lazy-loading/" target="_blank" rel="noopener">懒加载</a></h4><p>懒加载是在代码分离的基础上更近了一步。</p>
+<p>虽然我们可以将代码进行代码分离，但代码分离后的 bundle 只是加载的优先级会不同，最终还是会加载，但实际情况是某些代码在用户进行某项操作之前是不需要加载的。比如：个人信息编辑页面有一个用户修改头像功能，对于用户来说，即使他进入了个人信息编辑页面，在他未点击上传按钮之前，用于上传头像的代码是没必要加载的。</p>
+<p><a href="https://router.vuejs.org/zh-cn/" target="_blank" rel="noopener">Vue-Router</a> 结合 Vue 的<a href="https://cn.vuejs.org/v2/guide/components.html#%E5%BC%82%E6%AD%A5%E7%BB%84%E4%BB%B6" target="_blank" rel="noopener">异步组件</a>和 Webpack 的<a href="(https://doc.webpack-china.org/guides/code-splitting/">代码分割</a>)功能，实现了<a href="https://router.vuejs.org/zh-cn/advanced/lazy-loading.html" target="_blank" rel="noopener">路由组件的懒加载</a>。</p>
+<p>在经过精简依赖、代码分离和懒加载之后，项目的资源包体积大小如下图：</p>
+<p>Gzipped：<br><img src="个人中心代码分离-Gzipped.png" alt="Parsed"></p>
+<p>用户进入首页需要加载的 js 资源从 <code>vendor.js</code>、<code>main.js</code> 和 <code>chunks</code> 共 672.84kb 变为只需要加载一个 186kb 的 <code>main.js</code>。</p>
+<h4 id="复用-Store-数据以减少网络请求数量"><a href="#复用-Store-数据以减少网络请求数量" class="headerlink" title="复用 Store 数据以减少网络请求数量"></a>复用 Store 数据以减少网络请求数量</h4><p>来问丁香医生是基于 <a href="https://cn.vuejs.org/v2/guide/" target="_blank" rel="noopener">Vue.js</a> 全家桶实现的，状态管理用的是 <a href="https://vuex.vuejs.org/zh-cn/getting-started.html" target="_blank" rel="noopener">Vuex</a>。</p>
+<p>之前的实现中，有些功能实现没有很在意 <code>Store</code> 数据的复用。比如：从 A 页面进入 B 页面后再返回 A 页面时，会再去获取端获取一次 A 页面需要的数据。这种处理不仅仅是多发了不必要的请求，如果在请求过程中做了一些页面级别加载中的处理，那么每次切换页面时都会让用户看到 loading 效果，这也会让人觉得加载慢。既然用了状态管理，那么就应该把他利用好才是。</p>
+<p>本次优化过程中的数据复用，主要是在部分请求 <code>action</code> 之前增加逻辑判断，如果 <code>Store</code> 中有当前操作需要的数据，则不再调用 <code>action</code>。</p>
+<h3 id="前后端彻底分离"><a href="#前后端彻底分离" class="headerlink" title="前后端彻底分离"></a>前后端彻底分离</h3><p>关于这一点会再写一篇文章进行阐述。</p>
+<h2 id="丁香医生小程序-1"><a href="#丁香医生小程序-1" class="headerlink" title="丁香医生小程序"></a>丁香医生小程序</h2><p>老规矩，先看图：<br><img src="小程序 页面加载优化.png" alt="小程序 页面加载优化"></p>
+<h3 id="图片资源"><a href="#图片资源" class="headerlink" title="图片资源"></a>图片资源</h3><p>最开始做小程序时，是把所有图片资源 base64 后进行使用的，这导致了所有图片资源最终都被打包到小程序的安装包中。所以做小程序的加载速度优化的第一步，就是把一些体积较大的图片资源改为使用线上资源。具体做法是将素材先上传到 cdn，然后在小程序中直接使用线上图片地址。</p>
+<h3 id="登录鉴权优化"><a href="#登录鉴权优化" class="headerlink" title="登录鉴权优化"></a>登录鉴权优化</h3><p>原本小程序的登录是我们自己实现的一套登录方案，核心是前后端一起维护一个类似于 <code>SessionId</code> 的 ID。服务端对于这个 ID 是设置了有效期的，而之前前端的实现是每次用户启动小程序，都直接去请求公司的 SSO 获取一个新的 ID，没有在意本地的 ID 是否过期。</p>
+<p>优化的点在于在应用启动时，增加对 ID 有效期的判断，从而避免每次用户启动都需要发请求获取新的 ID。</p>
+<h3 id="预渲染"><a href="#预渲染" class="headerlink" title="预渲染"></a>预渲染</h3><p>之前在小程序所有需要从服务端获取数据的页面，都实现了一个加载中的效果，即请求未返回结果时，整个页面用户只会看到一个加载中的菊花。如果某页面只有服务端提供的元数据级别接口，没有业务接口，并且接口返回的数据是有依赖关系的，那么用户等待的时间会大大加长。</p>
+<p>仔细思考会发现，其实是没有必要等所有接口数据回来后再给用户呈现完整页面的。</p>
+<p>最终的优化方案分为两种：一种是取消加载中效果，先给用户呈现完整的利用本地数据渲染好的页面，等接口返回数据后在进行页面视图的更新；另外一种方案是取消加载中效果，但是不做本地数据渲染，而是直接给用户看到部分静态页面。</p>
+<h3 id="分包加载"><a href="#分包加载" class="headerlink" title="分包加载"></a><a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/subpackages.html" target="_blank" rel="noopener">分包加载</a></h3><p>关于分包加载，就老老实实的按照官方文档做就好了。进行分包后的效果还是很不错的。具体效果可以参考文章开头的数据统计。</p>
+<p>目前上述方案中，效果比较明显的是预渲染和分包加载。一个是视觉上让用户觉得快了，一个是真真切切的把首次加载的资源包变小了。</p>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>软件的性能，在编写第一行代码开始，到软件的生命周期结束，都应该给予足够的重视（在做项目写代码的过程中能规避可能出现的性能问题，是需要一定的技术功底的，在实现的时候也不一定非得强求性能，慢慢修炼就好）。</li>
+<li>在涉及到项目架构层面的改动时，一定一定要做足够的回归测试（经历过的热都应该知道为什么会这么说）。</li>
+<li>要学会用数据说话。</li>
+</ul>
+<hr>
+<h1 id="结束了吗？"><a href="#结束了吗？" class="headerlink" title="结束了吗？"></a>结束了吗？</h1><p>No！前端性能优化这条路，路漫漫其修远兮。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/dxy_notes_qrcode.jpg" alt="志遥 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>微信扫一扫，我在丁香园记公众号等你</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端/" rel="tag"># 前端</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/18/2017-qcon-shanghai/" rel="next" title="2017 Qcon 上海站游记">
+                <i class="fa fa-chevron-left"></i> 2017 Qcon 上海站游记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/03/farewell/" rel="prev" title="告别是为了彼此变得更好---SPA 前后端彻底分离的探索之路">
+                告别是为了彼此变得更好---SPA 前后端彻底分离的探索之路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="志遥" />
+            
+              <p class="site-author-name" itemprop="name">志遥</p>
+              <p class="site-description motion-element" itemprop="description">Find what u really love, and let it kill U ~</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">76</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">42</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/lizhiyao" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.instagram.com/_lizhiyao/" target="_blank" title="Instagram" rel="external nofollow"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dancerlzy@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/dancerlzy/" target="_blank" title="知乎" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://juejin.im/user/57b15330c4c971005487322f" target="_blank" title="掘金" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#效果"><span class="nav-number">1.</span> <span class="nav-text">效果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#来问丁香医生"><span class="nav-number">1.1.</span> <span class="nav-text">来问丁香医生 </span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chrome-Network"><span class="nav-number">1.1.1.</span> <span class="nav-text">Chrome Network</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优化前"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">优化前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优化后"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">优化后</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mta"><span class="nav-number">1.1.2.</span> <span class="nav-text">mta</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Google-PageSpeed-Insights-和-pagespeed-insights-Chrome-插件"><span class="nav-number">1.1.3.</span> <span class="nav-text">Google PageSpeed Insights 和 pagespeed insights Chrome 插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#丁香医生小程序"><span class="nav-number">1.2.</span> <span class="nav-text">丁香医生小程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么做加载速度优化？"><span class="nav-number">2.</span> <span class="nav-text">为什么做加载速度优化？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么说是前端响应速度优化，而不是前后端？"><span class="nav-number">3.</span> <span class="nav-text">为什么说是前端响应速度优化，而不是前后端？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么说是初级？"><span class="nav-number">4.</span> <span class="nav-text">为什么说是初级？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何做的？"><span class="nav-number">5.</span> <span class="nav-text">如何做的？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#来问丁香医生-SPA"><span class="nav-number">5.1.</span> <span class="nav-text">来问丁香医生 SPA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现游客机制"><span class="nav-number">5.1.1.</span> <span class="nav-text">实现游客机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#减小资源包体积"><span class="nav-number">5.1.2.</span> <span class="nav-text">减小资源包体积</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#精简第三方依赖"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">精简第三方依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码分离"><span class="nav-number">5.1.2.2.</span> <span class="nav-text">代码分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态导入-dynamic-imports"><span class="nav-number">5.1.2.3.</span> <span class="nav-text">动态导入(dynamic imports)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例"><span class="nav-number">5.1.2.4.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#懒加载"><span class="nav-number">5.1.2.5.</span> <span class="nav-text">懒加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复用-Store-数据以减少网络请求数量"><span class="nav-number">5.1.2.6.</span> <span class="nav-text">复用 Store 数据以减少网络请求数量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前后端彻底分离"><span class="nav-number">5.1.3.</span> <span class="nav-text">前后端彻底分离</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#丁香医生小程序-1"><span class="nav-number">5.2.</span> <span class="nav-text">丁香医生小程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#图片资源"><span class="nav-number">5.2.1.</span> <span class="nav-text">图片资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#登录鉴权优化"><span class="nav-number">5.2.2.</span> <span class="nav-text">登录鉴权优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预渲染"><span class="nav-number">5.2.3.</span> <span class="nav-text">预渲染</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分包加载"><span class="nav-number">5.2.4.</span> <span class="nav-text">分包加载</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束了吗？"><span class="nav-number">7.</span> <span class="nav-text">结束了吗？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">志遥</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G3UH8HdORUYIKeHXHP6J4lEM-gzGzoHsz", "PYiTH8lrUw7uQJ4Fm83lfIEA");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! See more at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see here how to solve it: https://github.com/theme-next/hexo-leancloud-counter-security. \n But you also can use LeanCloud without security, by set \'security\' option to \'false\'.');
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
