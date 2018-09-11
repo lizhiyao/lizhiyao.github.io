@@ -99,25 +99,25 @@
 
 
 
-  <meta name="description" content="16 年年底时，">
+  <meta name="description" content="时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。 起因世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 C">
 <meta name="keywords" content="Code Review">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Code Review 在丁香医生前端团队的实践">
-<meta property="og:url" content="http://lizhiyao.github.io/2018/01/25/code-review/index.html">
+<meta property="og:url" content="http://lizhiyao.github.io/2018/09/11/code-review/index.html">
 <meta property="og:site_name" content="丁香园记">
-<meta property="og:description" content="16 年年底时，">
+<meta property="og:description" content="时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。 起因世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 C">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-07T08:30:54.339Z">
+<meta property="og:updated_time" content="2018-09-11T14:34:57.544Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Code Review 在丁香医生前端团队的实践">
-<meta name="twitter:description" content="16 年年底时，">
+<meta name="twitter:description" content="时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。 起因世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 C">
 
 
 
 
 
 
-  <link rel="canonical" href="http://lizhiyao.github.io/2018/01/25/code-review/"/>
+  <link rel="canonical" href="http://lizhiyao.github.io/2018/09/11/code-review/"/>
 
 
 
@@ -355,7 +355,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2018/01/25/code-review/">
+    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2018/09/11/code-review/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="志遥">
@@ -384,7 +384,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-25T10:17:45+08:00">2018-01-25</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-11T10:17:45+08:00">2018-09-11</time>
             
 
             
@@ -402,8 +402,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/01/25/code-review/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/01/25/code-review/" itemprop="commentsCount"></span>
+                <a href="/2018/09/11/code-review/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/09/11/code-review/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -411,7 +411,7 @@
 
           
           
-             <span id="/2018/01/25/code-review/" class="leancloud_visitors" data-flag-title="Code Review 在丁香医生前端团队的实践">
+             <span id="/2018/09/11/code-review/" class="leancloud_visitors" data-flag-title="Code Review 在丁香医生前端团队的实践">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -442,7 +442,138 @@
       
 
       
-        <p>16 年年底时，</p>
+        <p>时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。</p>
+<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 Code Review。最开始时，丁香医生前端有2个人，基本上是1人在做丁香医生 SPA 项目，1人做丁香医生管理后台项目。</p>
+<p>将时间点放到17年初，团队从2个人变为了3个人，此时主要有三个前端项目（丁香医生 SPA、丁香医生管理后台以及丁香医生 Hybrid App）在迭代，其中主要是 SPA 项目会涉及到三个人的交叉维护。这个阶段便会开始暴露出一些小问题。比如：</p>
+<ul>
+<li>编码风格不一致</li>
+<li>有些他人写的业务逻辑，在交叉维护时，需要花更多的时间上手</li>
+<li>一些低级的 bug 在代码部署到测试环境才被发现</li>
+</ul>
+<p>为了解决这些问题，我们决定开始尝试 Code Review。项目的代码是托管在公司内网的 Gitlab 上的，于是我们会开始摸索着基于 GitLab 中项目的 <code>Merge Request</code> 进行他人代码的 Code Review。</p>
+<p>17年 Q2 时，我们开始频繁的迭代丁香医生小程序，同时运营团队也会开始提出一些运营类H5的需求。团队成员有4人了。随着新鲜血液的加入，我们遇到了新的问题：</p>
+<ul>
+<li>新人的加入提高了团队代码风格的差异性</li>
+<li>在不是很了解现有项目的基础上，实现的新功能代码会产生冗余</li>
+<li>谁来为新成员的代码质量和成长负责？（注意：这是重要的一点）</li>
+</ul>
+<p>此时我们依旧在做 Code Review，但实际上并没有严格的去执行，也没有一个关于 Code Review 的标准供大家遵守。</p>
+<p>毫无疑问的一点：随着丁香医生业务的发展，这些问题是需要被解决的，否则长远来看无论是对于团队还是团队成员，都是有较大伤害的。</p>
+<p>17 年 Q3 时，团队已经有 6 个人了。每加入一个新人，上述问题的复杂度就会增加一些。为了解决这些问题，团队决定将 Code Review 作为一项基本制度，严格去执行。</p>
+<hr>
+<h1 id="如何去做-Code-Review？"><a href="#如何去做-Code-Review？" class="headerlink" title="如何去做 Code Review？"></a>如何去做 Code Review？</h1><h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><p>在开始严格的去做 Code Review 之前，我们确定了三点基础规范。</p>
+<ol>
+<li>基于项目版本控制，统一项目遵守的 <a href="https://lizhiyao.github.io/2015/12/12/use-git/">Git 分支模型</a></li>
+<li>对于 JavaScript，使用统一的 Eslint 规则</li>
+<li>结合团队成员现有风格，明确统一的代码规范</li>
+</ol>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><p>使用的工具就地取材，依旧是 GitLab。整个 Code Review 流程在 GitLab 项目中有两个点比较关键：<code>Merge Request</code>（简称：MR）、<code>Discussion</code>（简称：Diss）。</p>
+<p>在这两点基础上，我们确定了几个角色：</p>
+<ul>
+<li>Owner（需求负责人，代码改动提交者，MR 发起者）</li>
+<li>Reviewers（MR 参与者，前端团队的同事，可能不止一个人。负责 Review 代码。）</li>
+<li>Disser（某个 Reviewer。对某个 MR 发起 Discussion 的人。）</li>
+</ul>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><ol start="0">
+<li>对 GitLab 上需要进行 Code Review 的项目进行设置（Settings - General - Merge request settings - Only allow merge requests to be merged if all discussions are resolved）。</li>
+<li>Owner 在本地开发环境，某分支（以某功能分支 feat-example 为例）做好功能开发，充分自测后将代码推送到 GitLab。</li>
+<li>Owner 基于 feat-example 分支，发起目标分支为 develop 分支的 MR。MR 需要有尽可能详细的描述。比如：需求文档地址，做了哪些修改，某个功能的设计实现思路，需要哪几位 reviewer 对本次 MR 进行 Code Review 等。推荐使用 MR 模板。</li>
+<li>Owner 成功发起 MR 后，通过团队协作工作告知 Reviewers 有 MR 需要进行 Code Review，以及 MR 的紧急程度。</li>
+<li>Reviewers 基于 MR 进行进行 code review。如果对 MR 有任何问题，在 GitLab 上针对具体代码进行 comment（发起 Discussion），review 完成后通知 Owner 结果（本次 MR 通过 / 本次 MR 有 n 个 Diss）。如果有 Diss，Owner 需要对每一个 Diss 进行回复，直至所有 Diss 的状态变更为 Resolved。</li>
+<li>Owner 对 MR 进行 merge 操作，并在测试环境发布代码，通知相关 QA 同学测试，QA 测试通过后由 QA 通知产品和设计师进行验收。（此处有一个细节：Owner 如果确定可以进行 merge 操作？我们想到有两个方案：1. 以 Reviewers 通知 Owner 为准 2. 以 Reviewers 给 MR 点赞为准，因为 GitLab 上是可以对 MR 进行点赞操作的。目前团队采用的是第2种方式。）</li>
+<li>如果测试或者验收环节发现问题，Owner 需要对代码进行修改，然后发起新一轮的 MR，直至测试环境代码通过验收。</li>
+<li>和 QA 同学确认代码可以发布至生产环境，并进行代码发布，通知 case 相关同学某功能已上线。</li>
+</ol>
+<h2 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h2><p>在执行 Code Review 过程中，我们有一些原则需要遵守：</p>
+<ul>
+<li>Owner 发起 MR 之前的代码需要进行充分自测</li>
+<li>代码版本控制 commit 的粒度不要太大</li>
+<li>不阻塞他人的工作，尽快响应他人的 Code Review 请求（这一点比较考验团队成员的合作精神、团队意识。同时也要求开发者要合理安排自己的时间，要有能力随时放下手中的工作，随时继续手中的工作）</li>
+<li>如果某个 MR 紧急，可以告知 Reviewers</li>
+<li>除有必要，否则 Owner 不要在提测验收阶段删除分支（例如勾选“remove source branch when merge request is accepted.”），应等待分支合入master分支后移除，避免预发/测试分支重建时被遗漏。</li>
+<li>定期回顾和总结 Code Review 执行情况（比如在团队周会时进行）</li>
+</ul>
+<h2 id="边界"><a href="#边界" class="headerlink" title="边界"></a>边界</h2><p>清楚了 Code Review 流程之后，其实还有一些边界情况需要考虑。我会将团队目前采用的处理策略写出来供参考。</p>
+<ol>
+<li>周末出现线上紧急 bug 要遵循 Code Review 流程吗？可以不进行 Code Review，以快速修复 bug 为主。</li>
+<li>某个需求（项目）留给开发时间非常紧张时怎么办？可以不进行 Code Review，优先保证按时需求（项目）上线。</li>
+<li>团队内部项目、组内同学个人发起的兴趣项目是否需要进行 code review？决定权在项目 Owner。</li>
+<li>MR 遇到代码冲突怎么办？建议在 code review 之后，由 Owner 将代码拉取到本地进行 merge 并解决冲突，然后将最新代码推送到 GitLab（此时 GitLab 上 MR 会自动 merge 掉）。</li>
+</ol>
+<hr>
+<h1 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h1><p>坦言，在一个从未进行过 Code Review 的团队想把这个机制运作起来，并不是一件容易的事情。尤其是在决定开始进行 Code Review 后的起步阶段。但是如果能认准方向，团队的成员齐心协力朝着既定的方向去走，最终会获得如下的收获的：</p>
+<ul>
+<li>团队成员代码风格统一</li>
+<li>减小了项目交叉维护的阻力</li>
+<li>使新成员更快速融入团队</li>
+<li>避免了低级 bug 在测试环境出现</li>
+<li>良好的技术交流氛围</li>
+</ul>
+<hr>
+<h1 id="待完善"><a href="#待完善" class="headerlink" title="待完善"></a>待完善</h1><p>上面描述的这个机制并不是完美的。目前我可以想到的可以优化的点如下：</p>
+<ul>
+<li>优化编码规范（技术本身在发展，团队成员的水平在提高，随之之前定下来的编码规范也会适当的进行优化）</li>
+<li>Check List（这一点实际上目前团队已经开始做了。当业务具有一定复杂度后，某些业务逻辑的迭代难免会牵扯较多已有业务，此时如果有一份 Check List，会帮助 Owner 及 Reviewers 更好的进行 Code Review）</li>
+<li>激励机制</li>
+<li>代码测试用例（主要是指业务代码增加测试用例。目前团队也开始进行了一些尝试。）</li>
+<li>自动化</li>
+</ul>
+<hr>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>将团队在使用的 Code Review 机制以文字的形式沉淀下来，主要是想分享给更多的人。如果这些文字对某些人、某些团队有帮助，那对于我来说是一件令人欣慰的事情。如果能接收到关于优化现有机制的指点，也会是一件令人开心和感激的事情。</p>
+<p>此外，还想表达的一点是：丁香医生前端团队是一个非常在意每一个团队成员成长的团队。</p>
+<p>我猜，你可能猜到接下来我要说什么了。</p>
+<p>是的，随着丁香医生业务的发展，我们需要优秀的前端同学加入我们，一起茁壮肆意成长。更多关于团队的介绍，可以参考<a href="https://juejin.im/post/5b5ddcd7f265da0f531e84fa" target="_blank" rel="noopener">请问丁香医生前端团队怎么样？</a></p>
+<h2 id="招聘-JD"><a href="#招聘-JD" class="headerlink" title="招聘 JD"></a>招聘 JD</h2><h3 id="高级-资深前端工程师"><a href="#高级-资深前端工程师" class="headerlink" title="高级/资深前端工程师"></a>高级/资深前端工程师</h3><h4 id="职位描述"><a href="#职位描述" class="headerlink" title="职位描述"></a>职位描述</h4><ul>
+<li>负责丁香医生旗下产品的前端开发工作（网站，Web App，Hybrid App，微信小程序，管理后台，Node.js 中间层）；</li>
+<li>依据产品的需求，优质高效的完成前端项目的开发和维护；</li>
+<li>对产品的前端性能进行优化，确保产品具有优质的用户体验；</li>
+<li>参与丁香园前端团队的基础平台建设；</li>
+</ul>
+<h4 id="任职条件"><a href="#任职条件" class="headerlink" title="任职条件"></a>任职条件</h4><ul>
+<li>3 年以上前端工作经验；</li>
+<li>熟练使用 HTML（HTML5）、CSS（CSS3）和 JavaScript（ES6/ES7）；</li>
+<li>熟悉网络协议（HTTP/SSL）；</li>
+<li>熟练使用 Webpack 或者 rollupjs；</li>
+<li>至少熟练使用一种 CSS 预处理器（如：Less、Sass、Stylus）；</li>
+<li>至少熟练使用 Vue.js、React.js、AngularJS 三种框架中的一种；</li>
+<li>对前端开发规范、工程化、组件化、测试有一定的认识和实践；</li>
+<li>理解并熟练使用面向对象编程思想，注重设计模式、模块化开发在实际项目中的应用；</li>
+<li>较强的责任心，良好的沟通能力和文档编写能力；</li>
+</ul>
+<h4 id="优先条件"><a href="#优先条件" class="headerlink" title="优先条件"></a>优先条件</h4><ul>
+<li>在简历里写明 Github 账号或个人博客地址；</li>
+<li>独立开发过或者参与过优质的开源项目；</li>
+<li>有实际 Hybrid App 项目开发经验；</li>
+<li>有实际的微信小程序项目开发经验；</li>
+<li>有高负载场景下 Node.js 应用开发和运维经验；</li>
+<li>熟练使用 TypeScript；</li>
+<li>熟悉使用一门非前端的编程语言（如：Java、PHP、Python、Go）；</li>
+</ul>
+<h3 id="前端实习生（全职）"><a href="#前端实习生（全职）" class="headerlink" title="前端实习生（全职）"></a>前端实习生（全职）</h3><h4 id="职位描述-1"><a href="#职位描述-1" class="headerlink" title="职位描述"></a>职位描述</h4><ul>
+<li>负责丁香医生旗下产品的前端开发工作（网站，Web App，Hybrid App，微信小程序，管理后台，Node.js 中间层）；</li>
+<li>依据产品的需求，优质高效的完成前端项目的开发和维护；</li>
+<li>对产品的前端性能进行优化，确保产品具有优质的用户体验；</li>
+<li>参与丁香园前端团队的基础平台建设；</li>
+</ul>
+<h4 id="任职条件-1"><a href="#任职条件-1" class="headerlink" title="任职条件"></a>任职条件</h4><ul>
+<li>对编程技术有热情，期望自己在技术上有快速成长；</li>
+<li>毕业前能够全职实习至少 6 个月；</li>
+<li>熟练使用 HTML（HTML5）、CSS（CSS3）和 JavaScript（ES6/ES7）；</li>
+<li>熟悉网络协议（HTTP/SSL）；</li>
+<li>理解并熟练使用面向对象编程思想，注重设计模式、模块化开发在实际项目中的应用；</li>
+<li>较强的责任心，良好的沟通能力和文档编写能力；</li>
+</ul>
+<h4 id="优先条件-1"><a href="#优先条件-1" class="headerlink" title="优先条件"></a>优先条件</h4><ul>
+<li>在简历里写明 Github 账号或个人博客地址；</li>
+<li>独立开发过或者参与过优质的开源项目；</li>
+<li>熟练使用 Vue.js、React.js、AngularJS 三种框架中的一种；</li>
+<li>有实际 Hybrid App 项目开发经验；</li>
+<li>有高负载场景下 Node.js 应用开发和运维经验；</li>
+<li>熟练使用 TypeScript；</li>
+<li>熟练使用一种 CSS 预处理器（如：Less、Sass、Stylus）；</li>
+<li>熟悉使用一门非前端的编程语言（如：Java、PHP、Python、Go）；</li>
+</ul>
+<p>既然已经看到这里了，不如发一封邮件我们聊一下吧：<a href="mailto:lizy@dxy.cn" target="_blank" rel="noopener">lizy@dxy.cn</a>。</p>
 
       
     </div>
@@ -484,8 +615,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/05/mixins-considered-harmful/" rel="next" title="Mixins 被认为是有害的">
-                <i class="fa fa-chevron-left"></i> Mixins 被认为是有害的
+              <a href="/2018/06/26/you-do-not-know-the-front-end-team-of-dxy-doctor/" rel="next" title="请问丁香医生前端团队怎么样？">
+                <i class="fa fa-chevron-left"></i> 请问丁香医生前端团队怎么样？
               </a>
             
           </div>
@@ -493,10 +624,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/02/07/ios-weapp-textarea/" rel="prev" title="小程序 textarea 组件踩坑之旅">
-                小程序 textarea 组件踩坑之旅 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -552,8 +679,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -730,6 +866,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#起因"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何去做-Code-Review？"><span class="nav-number">2.</span> <span class="nav-text">如何去做 Code Review？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前提"><span class="nav-number">2.1.</span> <span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具"><span class="nav-number">2.2.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">2.3.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原则"><span class="nav-number">2.4.</span> <span class="nav-text">原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#边界"><span class="nav-number">2.5.</span> <span class="nav-text">边界</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#收获"><span class="nav-number">3.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#待完善"><span class="nav-number">4.</span> <span class="nav-text">待完善</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#写在最后"><span class="nav-number">5.</span> <span class="nav-text">写在最后</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#招聘-JD"><span class="nav-number">5.1.</span> <span class="nav-text">招聘 JD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高级-资深前端工程师"><span class="nav-number">5.1.1.</span> <span class="nav-text">高级/资深前端工程师</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#职位描述"><span class="nav-number">5.1.1.1.</span> <span class="nav-text">职位描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#任职条件"><span class="nav-number">5.1.1.2.</span> <span class="nav-text">任职条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优先条件"><span class="nav-number">5.1.1.3.</span> <span class="nav-text">优先条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前端实习生（全职）"><span class="nav-number">5.1.2.</span> <span class="nav-text">前端实习生（全职）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#职位描述-1"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">职位描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#任职条件-1"><span class="nav-number">5.1.2.2.</span> <span class="nav-text">任职条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优先条件-1"><span class="nav-number">5.1.2.3.</span> <span class="nav-text">优先条件</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
