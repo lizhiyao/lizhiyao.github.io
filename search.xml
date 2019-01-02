@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[测试]]></title>
+    <url>%2F2019%2F01%2F02%2Fjavascript%2Fthis%2Findex%2F</url>
+    <content type="text"><![CDATA[测试]]></content>
+  </entry>
+  <entry>
     <title><![CDATA[本博客内容已迁移至 http://zhiyaoli.com/]]></title>
     <url>%2F2018%2F09%2F24%2Fwelcome-to-zhiyaoli-com%2F</url>
     <content type="text"><![CDATA[欢迎到 http://zhiyaoli.com/ 访问新博客内容。]]></content>
@@ -462,11 +467,6 @@
       <tags>
         <tag>Vue.js</tag>
       </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[测试]]></title>
-    <url>%2F2016%2F07%2F30%2Fjavascript%2Fthis%2Findex%2F</url>
-    <content type="text"><![CDATA[测试]]></content>
   </entry>
   <entry>
     <title><![CDATA[基于React构建大中型Web应用]]></title>
