@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: 'RU6IFL6YOS',
+      apiKey: '59ab260b4dc669a506fbca973aca1231',
+      indexName: 'lizhiyao.github.io',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。 起因世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 C">
+<meta name="keywords" content="Code Review">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Code Review 在丁香医生前端团队的实践">
+<meta property="og:url" content="http://lizhiyao.github.io/2018/09/11/f2e/code-review/index.html">
+<meta property="og:site_name" content="丁香园记">
+<meta property="og:description" content="时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。 起因世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 C">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-23T16:57:33.055Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Code Review 在丁香医生前端团队的实践">
+<meta name="twitter:description" content="时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。 起因世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 C">
+
+
+
+
+
+
+  <link rel="canonical" href="http://lizhiyao.github.io/2018/09/11/f2e/code-review/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Code Review 在丁香医生前端团队的实践 | 丁香园记</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96917833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-96917833-1');
+</script>
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5476bfd46e559a87ee9508b21a534eb9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">丁香园记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-resume">
+    <a href="/resume/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-file"></i> <br />简历</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+  
+  
+  
+    
+      
+    
+    <a href="https://github.com/lizhiyao" class="github-corner" target="_blank" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#222; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg>
+    
+      </a>
+    
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2018/09/11/f2e/code-review/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="志遥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="丁香园记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Code Review 在丁香医生前端团队的实践</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-11T10:17:45+08:00">2018-09-11</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/09/11/f2e/code-review/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/09/11/f2e/code-review/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/09/11/f2e/code-review/" class="leancloud_visitors" data-flag-title="Code Review 在丁香医生前端团队的实践">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>时间过得很快，转眼间 Code Review 机制在丁香医生前端团队已经运作一年多了。今年4月初时，将团队在 Code Review 方面的一些经验在丁香园前端团队进行了分享，各个业务线的前端同学们逐步开始尝试 Code Review 机制，目前也有了一定的收获。是时候将这些实践经验落实到文字上，来和更多的朋友们进行交流了。</p>
+<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>世上没有无缘无故的爱，也没有无缘无故的恨。同样，也没有无缘无故的 Code Review。最开始时，丁香医生前端有2个人，基本上是1人在做丁香医生 SPA 项目，1人做丁香医生管理后台项目。</p>
+<p>将时间点放到17年初，团队从2个人变为了3个人，此时主要有三个前端项目（丁香医生 SPA、丁香医生管理后台以及丁香医生 Hybrid App）在迭代，其中主要是 SPA 项目会涉及到三个人的交叉维护。这个阶段便会开始暴露出一些小问题。比如：</p>
+<ul>
+<li>编码风格不一致</li>
+<li>有些他人写的业务逻辑，在交叉维护时，需要花更多的时间上手</li>
+<li>一些低级的 bug 在代码部署到测试环境才被发现</li>
+</ul>
+<p>为了解决这些问题，我们决定开始尝试 Code Review。项目的代码是托管在公司内网的 Gitlab 上的，于是我们会开始摸索着基于 GitLab 中项目的 <code>Merge Request</code> 进行他人代码的 Code Review。</p>
+<p>17年 Q2 时，我们开始频繁的迭代丁香医生小程序，同时运营团队也会开始提出一些运营类H5的需求。团队成员有4人了。随着新鲜血液的加入，我们遇到了新的问题：</p>
+<ul>
+<li>新人的加入提高了团队代码风格的差异性</li>
+<li>在不是很了解现有项目的基础上，实现的新功能代码会产生冗余</li>
+<li>谁来为新成员的代码质量和成长负责？（注意：这是重要的一点）</li>
+</ul>
+<p>此时我们依旧在做 Code Review，但实际上并没有严格的去执行，也没有一个关于 Code Review 的标准供大家遵守。</p>
+<p>毫无疑问的一点：随着丁香医生业务的发展，这些问题是需要被解决的，否则长远来看无论是对于团队还是团队成员，都是有较大伤害的。</p>
+<p>17 年 Q3 时，团队已经有 6 个人了。每加入一个新人，上述问题的复杂度就会增加一些。为了解决这些问题，团队决定将 Code Review 作为一项基本制度，严格去执行。</p>
+<hr>
+<h1 id="如何去做-Code-Review？"><a href="#如何去做-Code-Review？" class="headerlink" title="如何去做 Code Review？"></a>如何去做 Code Review？</h1><h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><p>在开始严格的去做 Code Review 之前，我们确定了三点基础规范。</p>
+<ol>
+<li>基于项目版本控制，统一项目遵守的 <a href="https://lizhiyao.github.io/2015/12/12/use-git/">Git 分支模型</a></li>
+<li>对于 JavaScript，使用统一的 Eslint 规则</li>
+<li>结合团队成员现有风格，明确统一的代码规范</li>
+</ol>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><p>使用的工具就地取材，依旧是 GitLab。整个 Code Review 流程在 GitLab 项目中有两个点比较关键：<code>Merge Request</code>（简称：MR）、<code>Discussion</code>（简称：Diss）。</p>
+<p>在这两点基础上，我们确定了几个角色：</p>
+<ul>
+<li>Owner（需求负责人，代码改动提交者，MR 发起者）</li>
+<li>Reviewers（MR 参与者，前端团队的同事，可能不止一个人。负责 Review 代码。）</li>
+<li>Disser（某个 Reviewer。对某个 MR 发起 Discussion 的人。）</li>
+</ul>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><ol start="0">
+<li>对 GitLab 上需要进行 Code Review 的项目进行设置（Settings - General - Merge request settings - Only allow merge requests to be merged if all discussions are resolved）。</li>
+<li>Owner 在本地开发环境，某分支（以某功能分支 feat-example 为例）做好功能开发，充分自测后将代码推送到 GitLab。</li>
+<li>Owner 基于 feat-example 分支，发起目标分支为 develop 分支的 MR。MR 需要有尽可能详细的描述。比如：需求文档地址，做了哪些修改，某个功能的设计实现思路，需要哪几位 reviewer 对本次 MR 进行 Code Review 等。推荐使用 MR 模板。</li>
+<li>Owner 成功发起 MR 后，通过团队协作工作告知 Reviewers 有 MR 需要进行 Code Review，以及 MR 的紧急程度。</li>
+<li>Reviewers 基于 MR 进行进行 code review。如果对 MR 有任何问题，在 GitLab 上针对具体代码进行 comment（发起 Discussion），review 完成后通知 Owner 结果（本次 MR 通过 / 本次 MR 有 n 个 Diss）。如果有 Diss，Owner 需要对每一个 Diss 进行回复，直至所有 Diss 的状态变更为 Resolved。</li>
+<li>Owner 对 MR 进行 merge 操作，并在测试环境发布代码，通知相关 QA 同学测试，QA 测试通过后由 QA 通知产品和设计师进行验收。（此处有一个细节：Owner 如果确定可以进行 merge 操作？我们想到有两个方案：1. 以 Reviewers 通知 Owner 为准 2. 以 Reviewers 给 MR 点赞为准，因为 GitLab 上是可以对 MR 进行点赞操作的。目前团队采用的是第2种方式。）</li>
+<li>如果测试或者验收环节发现问题，Owner 需要对代码进行修改，然后发起新一轮的 MR，直至测试环境代码通过验收。</li>
+<li>和 QA 同学确认代码可以发布至生产环境，并进行代码发布，通知 case 相关同学某功能已上线。</li>
+</ol>
+<h2 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h2><p>在执行 Code Review 过程中，我们有一些原则需要遵守：</p>
+<ul>
+<li>Owner 发起 MR 之前的代码需要进行充分自测</li>
+<li>代码版本控制 commit 的粒度不要太大</li>
+<li>不阻塞他人的工作，尽快响应他人的 Code Review 请求（这一点比较考验团队成员的合作精神、团队意识。同时也要求开发者要合理安排自己的时间，要有能力随时放下手中的工作，随时继续手中的工作）</li>
+<li>如果某个 MR 紧急，可以告知 Reviewers</li>
+<li>除有必要，否则 Owner 不要在提测验收阶段删除分支（例如勾选“remove source branch when merge request is accepted.”），应等待分支合入master分支后移除，避免预发/测试分支重建时被遗漏。</li>
+<li>定期回顾和总结 Code Review 执行情况（比如在团队周会时进行）</li>
+</ul>
+<h2 id="边界"><a href="#边界" class="headerlink" title="边界"></a>边界</h2><p>清楚了 Code Review 流程之后，其实还有一些边界情况需要考虑。我会将团队目前采用的处理策略写出来供参考。</p>
+<ol>
+<li>周末出现线上紧急 bug 要遵循 Code Review 流程吗？可以不进行 Code Review，以快速修复 bug 为主。</li>
+<li>某个需求（项目）留给开发时间非常紧张时怎么办？可以不进行 Code Review，优先保证按时需求（项目）上线。</li>
+<li>团队内部项目、组内同学个人发起的兴趣项目是否需要进行 code review？决定权在项目 Owner。</li>
+<li>MR 遇到代码冲突怎么办？建议在 code review 之后，由 Owner 将代码拉取到本地进行 merge 并解决冲突，然后将最新代码推送到 GitLab（此时 GitLab 上 MR 会自动 merge 掉）。</li>
+</ol>
+<hr>
+<h1 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h1><p>坦言，在一个从未进行过 Code Review 的团队想把这个机制运作起来，并不是一件容易的事情。尤其是在决定开始进行 Code Review 后的起步阶段。但是如果能认准方向，团队的成员齐心协力朝着既定的方向去走，最终会获得如下的收获的：</p>
+<ul>
+<li>团队成员代码风格统一</li>
+<li>减小了项目交叉维护的阻力</li>
+<li>使新成员更快速融入团队</li>
+<li>避免了低级 bug 在测试环境出现</li>
+<li>良好的技术交流氛围</li>
+</ul>
+<hr>
+<h1 id="待完善"><a href="#待完善" class="headerlink" title="待完善"></a>待完善</h1><p>上面描述的这个机制并不是完美的。目前我可以想到的可以优化的点如下：</p>
+<ul>
+<li>优化编码规范（技术本身在发展，团队成员的水平在提高，随之之前定下来的编码规范也会适当的进行优化）</li>
+<li>Check List（这一点实际上目前团队已经开始做了。当业务具有一定复杂度后，某些业务逻辑的迭代难免会牵扯较多已有业务，此时如果有一份 Check List，会帮助 Owner 及 Reviewers 更好的进行 Code Review）</li>
+<li>激励机制</li>
+<li>代码测试用例（主要是指业务代码增加测试用例。目前团队也开始进行了一些尝试。）</li>
+<li>自动化</li>
+</ul>
+<hr>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>将团队在使用的 Code Review 机制以文字的形式沉淀下来，主要是想分享给更多的人。如果这些文字对某些人、某些团队有帮助，那对于我来说是一件令人欣慰的事情。如果能接收到关于优化现有机制的指点，也会是一件令人开心和感激的事情。</p>
+<p>此外，还想表达的一点是：丁香医生前端团队是一个非常在意每一个团队成员成长的团队。</p>
+<p>我猜，你可能猜到接下来我要说什么了。</p>
+<p>是的，随着丁香医生业务的发展，我们需要优秀的前端同学加入我们，一起茁壮肆意成长。更多关于团队的介绍，可以参考<a href="https://juejin.im/post/5b5ddcd7f265da0f531e84fa" target="_blank" rel="noopener">请问丁香医生前端团队怎么样？</a></p>
+<h2 id="招聘-JD"><a href="#招聘-JD" class="headerlink" title="招聘 JD"></a>招聘 JD</h2><h3 id="高级-资深前端工程师"><a href="#高级-资深前端工程师" class="headerlink" title="高级/资深前端工程师"></a>高级/资深前端工程师</h3><h4 id="职位描述"><a href="#职位描述" class="headerlink" title="职位描述"></a>职位描述</h4><ul>
+<li>负责丁香医生旗下产品的前端开发工作（网站，Web App，Hybrid App，微信小程序，管理后台，Node.js 中间层）；</li>
+<li>依据产品的需求，优质高效的完成前端项目的开发和维护；</li>
+<li>对产品的前端性能进行优化，确保产品具有优质的用户体验；</li>
+<li>参与丁香园前端团队的基础平台建设；</li>
+</ul>
+<h4 id="任职条件"><a href="#任职条件" class="headerlink" title="任职条件"></a>任职条件</h4><ul>
+<li>3 年以上前端工作经验；</li>
+<li>熟练使用 HTML（HTML5）、CSS（CSS3）和 JavaScript（ES6/ES7）；</li>
+<li>熟悉网络协议（HTTP/SSL）；</li>
+<li>熟练使用 Webpack 或者 rollupjs；</li>
+<li>至少熟练使用一种 CSS 预处理器（如：Less、Sass、Stylus）；</li>
+<li>至少熟练使用 Vue.js、React.js、AngularJS 三种框架中的一种；</li>
+<li>对前端开发规范、工程化、组件化、测试有一定的认识和实践；</li>
+<li>理解并熟练使用面向对象编程思想，注重设计模式、模块化开发在实际项目中的应用；</li>
+<li>较强的责任心，良好的沟通能力和文档编写能力；</li>
+</ul>
+<h4 id="优先条件"><a href="#优先条件" class="headerlink" title="优先条件"></a>优先条件</h4><ul>
+<li>在简历里写明 Github 账号或个人博客地址；</li>
+<li>独立开发过或者参与过优质的开源项目；</li>
+<li>有实际 Hybrid App 项目开发经验；</li>
+<li>有实际的微信小程序项目开发经验；</li>
+<li>有高负载场景下 Node.js 应用开发和运维经验；</li>
+<li>熟练使用 TypeScript；</li>
+<li>熟悉使用一门非前端的编程语言（如：Java、PHP、Python、Go）；</li>
+</ul>
+<h3 id="前端实习生（全职）"><a href="#前端实习生（全职）" class="headerlink" title="前端实习生（全职）"></a>前端实习生（全职）</h3><h4 id="职位描述-1"><a href="#职位描述-1" class="headerlink" title="职位描述"></a>职位描述</h4><ul>
+<li>负责丁香医生旗下产品的前端开发工作（网站，Web App，Hybrid App，微信小程序，管理后台，Node.js 中间层）；</li>
+<li>依据产品的需求，优质高效的完成前端项目的开发和维护；</li>
+<li>对产品的前端性能进行优化，确保产品具有优质的用户体验；</li>
+<li>参与丁香园前端团队的基础平台建设；</li>
+</ul>
+<h4 id="任职条件-1"><a href="#任职条件-1" class="headerlink" title="任职条件"></a>任职条件</h4><ul>
+<li>对编程技术有热情，期望自己在技术上有快速成长；</li>
+<li>毕业前能够全职实习至少 6 个月；</li>
+<li>熟练使用 HTML（HTML5）、CSS（CSS3）和 JavaScript（ES6/ES7）；</li>
+<li>熟悉网络协议（HTTP/SSL）；</li>
+<li>理解并熟练使用面向对象编程思想，注重设计模式、模块化开发在实际项目中的应用；</li>
+<li>较强的责任心，良好的沟通能力和文档编写能力；</li>
+</ul>
+<h4 id="优先条件-1"><a href="#优先条件-1" class="headerlink" title="优先条件"></a>优先条件</h4><ul>
+<li>在简历里写明 Github 账号或个人博客地址；</li>
+<li>独立开发过或者参与过优质的开源项目；</li>
+<li>熟练使用 Vue.js、React.js、AngularJS 三种框架中的一种；</li>
+<li>有实际 Hybrid App 项目开发经验；</li>
+<li>有高负载场景下 Node.js 应用开发和运维经验；</li>
+<li>熟练使用 TypeScript；</li>
+<li>熟练使用一种 CSS 预处理器（如：Less、Sass、Stylus）；</li>
+<li>熟悉使用一门非前端的编程语言（如：Java、PHP、Python、Go）；</li>
+</ul>
+<p>既然已经看到这里了，不如发一封邮件我们聊一下吧：<a href="mailto:lizy@dxy.cn" target="_blank" rel="noopener">lizy@dxy.cn</a>。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/dxy_notes_qrcode.jpg" alt="志遥 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>微信扫一扫，我在丁香园记公众号等你</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Code-Review/" rel="tag"># Code Review</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/26/essay/you-do-not-know-the-front-end-team-of-dxy-doctor/you-do-not-know-the-front-end-team-of-dxy-doctor/" rel="next" title="请问丁香医生前端团队怎么样？">
+                <i class="fa fa-chevron-left"></i> 请问丁香医生前端团队怎么样？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/07/f2e/relationship-between-front-end-development-and-design draft/index/" rel="prev" title="震惊！前端开发和设计稿居然是这样的关系">
+                震惊！前端开发和设计稿居然是这样的关系 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a>
+    <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+    <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a class="bds_count" data-cmd="count"></a>
+  </div>
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "2",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "share": {
+        "bdSize": "16",
+        "bdStyle": "0"
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="志遥" />
+            
+              <p class="site-author-name" itemprop="name">志遥</p>
+              <p class="site-description motion-element" itemprop="description">Find what u really love, and let it kill U ~</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">76</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">41</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/lizhiyao" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.instagram.com/_lizhiyao/" target="_blank" title="Instagram" rel="external nofollow"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dancerlzy@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/dancerlzy/" target="_blank" title="知乎" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://juejin.im/user/57b15330c4c971005487322f" target="_blank" title="掘金" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                志遥的朋友们
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://zhiyaoli.com/" title="志遥里" target="_blank">志遥里</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#起因"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何去做-Code-Review？"><span class="nav-number">2.</span> <span class="nav-text">如何去做 Code Review？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前提"><span class="nav-number">2.1.</span> <span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具"><span class="nav-number">2.2.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">2.3.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原则"><span class="nav-number">2.4.</span> <span class="nav-text">原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#边界"><span class="nav-number">2.5.</span> <span class="nav-text">边界</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#收获"><span class="nav-number">3.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#待完善"><span class="nav-number">4.</span> <span class="nav-text">待完善</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#写在最后"><span class="nav-number">5.</span> <span class="nav-text">写在最后</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#招聘-JD"><span class="nav-number">5.1.</span> <span class="nav-text">招聘 JD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高级-资深前端工程师"><span class="nav-number">5.1.1.</span> <span class="nav-text">高级/资深前端工程师</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#职位描述"><span class="nav-number">5.1.1.1.</span> <span class="nav-text">职位描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#任职条件"><span class="nav-number">5.1.1.2.</span> <span class="nav-text">任职条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优先条件"><span class="nav-number">5.1.1.3.</span> <span class="nav-text">优先条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前端实习生（全职）"><span class="nav-number">5.1.2.</span> <span class="nav-text">前端实习生（全职）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#职位描述-1"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">职位描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#任职条件-1"><span class="nav-number">5.1.2.2.</span> <span class="nav-text">任职条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优先条件-1"><span class="nav-number">5.1.2.3.</span> <span class="nav-text">优先条件</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">志遥</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1.0.0/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.4/dist/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.4"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=6.0.6"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G3UH8HdORUYIKeHXHP6J4lEM-gzGzoHsz", "PYiTH8lrUw7uQJ4Fm83lfIEA");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var newcounter = new Counter();
+              /* Set ACL */
+              var acl = new AV.ACL();
+              acl.setPublicReadAccess(true);
+              acl.setPublicWriteAccess(true);
+              newcounter.setACL(acl);
+              /* End Set ACL */
+              newcounter.set("title", title);
+              newcounter.set("url", url);
+              newcounter.set("time", 1);
+              newcounter.save(null, {
+                success: function(newcounter) {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                },
+                error: function(newcounter, error) {
+                  console.log('Failed to create');
+                }
+              });
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

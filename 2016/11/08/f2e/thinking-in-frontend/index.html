@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: 'RU6IFL6YOS',
+      apiKey: '59ab260b4dc669a506fbca973aca1231',
+      indexName: 'lizhiyao.github.io',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="今年参加了 Qcon2016 上海站。三天时间，感觉今天会场比较火热的几个词是：前端、微服务、大数据、云平台。 个人对前端领域的总结为：  Vue 和 Weex 比较抢眼球。 Vue2.0 在性能上比其 1.x 版本有很大提升。 Weex 野心很大，目前在手套等阿里系 app 中已经广泛使用。可能会携手阿里云构建从生产到分发的一站式服务。 React、React Native 是目前国内互联网公司">
+<meta name="keywords" content="前端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于前端的一些思考">
+<meta property="og:url" content="http://lizhiyao.github.io/2016/11/08/f2e/thinking-in-frontend/index.html">
+<meta property="og:site_name" content="丁香园记">
+<meta property="og:description" content="今年参加了 Qcon2016 上海站。三天时间，感觉今天会场比较火热的几个词是：前端、微服务、大数据、云平台。 个人对前端领域的总结为：  Vue 和 Weex 比较抢眼球。 Vue2.0 在性能上比其 1.x 版本有很大提升。 Weex 野心很大，目前在手套等阿里系 app 中已经广泛使用。可能会携手阿里云构建从生产到分发的一站式服务。 React、React Native 是目前国内互联网公司">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-23T17:07:13.040Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于前端的一些思考">
+<meta name="twitter:description" content="今年参加了 Qcon2016 上海站。三天时间，感觉今天会场比较火热的几个词是：前端、微服务、大数据、云平台。 个人对前端领域的总结为：  Vue 和 Weex 比较抢眼球。 Vue2.0 在性能上比其 1.x 版本有很大提升。 Weex 野心很大，目前在手套等阿里系 app 中已经广泛使用。可能会携手阿里云构建从生产到分发的一站式服务。 React、React Native 是目前国内互联网公司">
+
+
+
+
+
+
+  <link rel="canonical" href="http://lizhiyao.github.io/2016/11/08/f2e/thinking-in-frontend/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>关于前端的一些思考 | 丁香园记</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96917833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-96917833-1');
+</script>
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5476bfd46e559a87ee9508b21a534eb9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">丁香园记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-resume">
+    <a href="/resume/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-file"></i> <br />简历</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+  
+  
+  
+    
+      
+    
+    <a href="https://github.com/lizhiyao" class="github-corner" target="_blank" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#222; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg>
+    
+      </a>
+    
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2016/11/08/f2e/thinking-in-frontend/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="志遥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="丁香园记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">关于前端的一些思考</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-08T09:43:57+08:00">2016-11-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/11/08/f2e/thinking-in-frontend/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2016/11/08/f2e/thinking-in-frontend/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2016/11/08/f2e/thinking-in-frontend/" class="leancloud_visitors" data-flag-title="关于前端的一些思考">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今年参加了 Qcon2016 上海站。三天时间，感觉今天会场比较火热的几个词是：<br>前端、微服务、大数据、云平台。</p>
+<p>个人对前端领域的总结为：</p>
+<ul>
+<li>Vue 和 Weex 比较抢眼球。</li>
+<li>Vue2.0 在性能上比其 1.x 版本有很大提升。</li>
+<li>Weex 野心很大，目前在手套等阿里系 app 中已经广泛使用。可能会携手阿里云构建从生产到分发的一站式服务。</li>
+<li>React、React Native 是目前国内互联网公司尝试、在实际项目中使用最多的技术。</li>
+<li>人们对 TypeScript 的关注度和接受程度比我预期的好很多。</li>
+<li>3D 技术在前端领域的应用有着广阔的前景。</li>
+<li>Progressive Web App 给前端开发者们点燃了新的希望，或者说，带来了一个新的信仰。</li>
+<li>会永远被讨论的话题在这次会议上当然会被讨论：代码异常监控、前后端分离、性能优化······</li>
+</ul>
+<p>作为一个自身定位为全栈，目前从事前端开发工作的我，下面尝试着结合参会的收获和自身的项目经验，<br>去写一些关于前端的思考。</p>
+<hr>
+<h1 id="开发者每天在做什么？"><a href="#开发者每天在做什么？" class="headerlink" title="开发者每天在做什么？"></a>开发者每天在做什么？</h1><p>大家会说：写新项目，修复已有项目的 bug，和产品经理对接需求，和同事们交流······<br>在这些事情中，始终有着信息的流动。</p>
+<p>有信息，就会有数据。或者说，信息即是数据。</p>
+<p>进一步概括，开发者每天在进行着信息的增删改查（CRUD，Create、Retrieve、Update、Delete）。</p>
+<p>那么，前端开发者们又在做什么？想弄清楚这个问题，需要先看看什么是「前端」。</p>
+<h1 id="什么是「前端」？"><a href="#什么是「前端」？" class="headerlink" title="什么是「前端」？"></a>什么是「前端」？</h1><p>广义上，是指一个软件产品中用户能够看到的部分。<br>狭义上，是指 B/S 结构软件中通过浏览器呈现给用户的部分（网页）。</p>
+<p>回想我们每一个项目的开发过程，从技术角度来看，我们每天做的工作有：</p>
+<ul>
+<li>从服务器端获取数据</li>
+<li>对从服务器获取的数据进行处理并使用</li>
+<li>处理用户输入的数据</li>
+<li>将各种来源数据变为一种对用户接受更友好的形式进行展示</li>
+<li>将数据从客户端传输到服务器端</li>
+</ul>
+<p>Server <-- data="" --=""> Broswer/App</--></p>
+<p>本质上，前端开发者每天在做的同样是数据的增删改查。</p>
+<p>综上，前端做的所有事情的最底层的支撑点是数据。</p>
+<p>数据这一层之上，是什么呢？</p>
+<p>我认为是：业务逻辑。</p>
+<p>有逻辑存在的地方，就会有一定的逻辑复杂度存在。</p>
+<p>前端前辈们经过不懈的探索和努力，创造了很多帮助开发者们应对复杂度的框架。</p>
+<h1 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h1><blockquote>
+<p>框架的存在是为了帮助我们应对复杂度。<br>应用复杂度 vs 框架复杂度<br>内在复杂度 vs 工具复杂度<br>工具复杂度是我们为了 处理内在复杂度所做的投资。—《Vue.js 渐进式前端解决方案》尤雨溪</p>
+</blockquote>
+<p>我把目前主流的框架粗暴地分为三个阵营：</p>
+<ul>
+<li><a href="http://cn.vuejs.org/" target="_blank" rel="noopener">Vue.js</a> 和 Weex</li>
+<li>React 和 React Native</li>
+<li><a href="https://angular.cn/" target="_blank" rel="noopener">Angualr</a> 和 <a href="http://ionicframework.com/" target="_blank" rel="noopener">Ionic</a></li>
+</ul>
+<p>其中， Vue 和 React 走的是下面这条路线：可弹性伸缩的工具复杂度应对不同复杂度场景（视图层核心 + 可选的附加库/工具链）。</p>
+<p>而 Angular 是一个大而全的框架，似乎在跟开发者说：有我就够了。（一套框架，多种平台。同时适用手机与桌面）。</p>
+<h1 id="Vue-js-amp-Weex"><a href="#Vue-js-amp-Weex" class="headerlink" title="Vue.js &amp; Weex"></a>Vue.js &amp; Weex</h1><h2 id="Vue-js"><a href="#Vue-js" class="headerlink" title="Vue.js"></a>Vue.js</h2><p>DOM 声明式or函数式的编写 状态的映射 逻辑在state之前处理</p>
+<p>V DOM 把耗费时间的工作放在接触到真实DOM API之前</p>
+<p>模板和JSX各有利弊</p>
+<p>watcher相比于React导致额外内存开销，但是相比于真实DOM渲染还是小很多。Vue2比Vue1内存开销小很多。</p>
+<p>Vue依赖追踪系统 高效精准</p>
+<h2 id="Weex"><a href="#Weex" class="headerlink" title="Weex"></a>Weex</h2><p>组件嵌套不会导致性能问题，组件数量会导致。</p>
+<p>合理细分组件，不必过度细分。</p>
+<h1 id="React-amp-React-Native"><a href="#React-amp-React-Native" class="headerlink" title="React &amp; React Native"></a>React &amp; React Native</h1><p>React优化 shouldComponentUpdate()</p>
+<h1 id="Angualr-amp-Ionic"><a href="#Angualr-amp-Ionic" class="headerlink" title="Angualr &amp; Ionic"></a>Angualr &amp; Ionic</h1><h1 id="框架背后的一些设计思想"><a href="#框架背后的一些设计思想" class="headerlink" title="框架背后的一些设计思想"></a>框架背后的一些设计思想</h1><h2 id="Component"><a href="#Component" class="headerlink" title="Component"></a>Component</h2><p>思想：UI结构映射到组件树</p>
+<h2 id="客户端路由"><a href="#客户端路由" class="headerlink" title="客户端路由"></a>客户端路由</h2><p>url和应用状态应该有一个映射关系</p>
+<h1 id="框架的选择"><a href="#框架的选择" class="headerlink" title="框架的选择"></a>框架的选择</h1><blockquote>
+<p>Pick the right tool for the job.</p>
+</blockquote>
+<p>应用内在复杂度 vs 工具复杂度</p>
+<h1 id="TypeScript"><a href="#TypeScript" class="headerlink" title="TypeScript"></a><a href="http://www.typescriptlang.org/" target="_blank" rel="noopener">TypeScript</a></h1><p>在构建对健壮性要求很高的 Web 应用时，建议使用。</p>
+<h1 id="3D技术在前端领域的应用"><a href="#3D技术在前端领域的应用" class="headerlink" title="3D技术在前端领域的应用"></a>3D技术在前端领域的应用</h1><p>不熟悉，待补充。</p>
+<h1 id="前后端分离"><a href="#前后端分离" class="headerlink" title="前后端分离"></a>前后端分离</h1><p>是合作方式上的分离，能物理隔离（代码库、进程）最好。</p>
+<hr>
+<h1 id="前端领域没有被提及的"><a href="#前端领域没有被提及的" class="headerlink" title="前端领域没有被提及的"></a>前端领域没有被提及的</h1><h2 id="微信小应用"><a href="#微信小应用" class="headerlink" title="微信小应用"></a>微信小应用</h2><p>大多数人处在观望状态。</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>应该被广泛的使用起来。</p>
+<h2 id="WebAssembly（WASM）"><a href="#WebAssembly（WASM）" class="headerlink" title="WebAssembly（WASM）"></a><a href="https://github.com/WebAssembly" target="_blank" rel="noopener">WebAssembly（WASM）</a></h2><p>一种面向Web的二进制格式。可以作为任何编程语言的编译目标，使应用程序可以运行在浏览器或其它代理中。</p>
+<p>使得使用任何能够编译成WASM的语言编写Web代码成为可能。</p>
+<h2 id="http2"><a href="#http2" class="headerlink" title="http2"></a>http2</h2><p>可能会引发一场构建工具的革命。</p>
+<hr>
+<h1 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h1><p>自动化，提高效率</p>
+<p>取舍</p>
+<p>不打扰过去，不高歌未来</p>
+<p>知行合一</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/dxy_notes_qrcode.jpg" alt="志遥 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>微信扫一扫，我在丁香园记公众号等你</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端/" rel="tag"># 前端</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/21/others/use-visual-studio-code-on-mac/" rel="next" title="使用Visual Studio Code的一些技巧（Mac）">
+                <i class="fa fa-chevron-left"></i> 使用Visual Studio Code的一些技巧（Mac）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/17/f2e/nvm/" rel="prev" title="nvm">
+                nvm <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a>
+    <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+    <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a class="bds_count" data-cmd="count"></a>
+  </div>
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "2",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "share": {
+        "bdSize": "16",
+        "bdStyle": "0"
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="志遥" />
+            
+              <p class="site-author-name" itemprop="name">志遥</p>
+              <p class="site-description motion-element" itemprop="description">Find what u really love, and let it kill U ~</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">76</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">41</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/lizhiyao" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.instagram.com/_lizhiyao/" target="_blank" title="Instagram" rel="external nofollow"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dancerlzy@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/dancerlzy/" target="_blank" title="知乎" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://juejin.im/user/57b15330c4c971005487322f" target="_blank" title="掘金" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                志遥的朋友们
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://zhiyaoli.com/" title="志遥里" target="_blank">志遥里</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开发者每天在做什么？"><span class="nav-number">1.</span> <span class="nav-text">开发者每天在做什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是「前端」？"><span class="nav-number">2.</span> <span class="nav-text">什么是「前端」？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#框架"><span class="nav-number">3.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Vue-js-amp-Weex"><span class="nav-number">4.</span> <span class="nav-text">Vue.js &amp; Weex</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue-js"><span class="nav-number">4.1.</span> <span class="nav-text">Vue.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Weex"><span class="nav-number">4.2.</span> <span class="nav-text">Weex</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#React-amp-React-Native"><span class="nav-number">5.</span> <span class="nav-text">React &amp; React Native</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Angualr-amp-Ionic"><span class="nav-number">6.</span> <span class="nav-text">Angualr &amp; Ionic</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#框架背后的一些设计思想"><span class="nav-number">7.</span> <span class="nav-text">框架背后的一些设计思想</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Component"><span class="nav-number">7.1.</span> <span class="nav-text">Component</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端路由"><span class="nav-number">7.2.</span> <span class="nav-text">客户端路由</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#框架的选择"><span class="nav-number">8.</span> <span class="nav-text">框架的选择</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TypeScript"><span class="nav-number">9.</span> <span class="nav-text">TypeScript</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3D技术在前端领域的应用"><span class="nav-number">10.</span> <span class="nav-text">3D技术在前端领域的应用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前后端分离"><span class="nav-number">11.</span> <span class="nav-text">前后端分离</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前端领域没有被提及的"><span class="nav-number">12.</span> <span class="nav-text">前端领域没有被提及的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#微信小应用"><span class="nav-number">12.1.</span> <span class="nav-text">微信小应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">12.2.</span> <span class="nav-text">Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebAssembly（WASM）"><span class="nav-number">12.3.</span> <span class="nav-text">WebAssembly（WASM）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http2"><span class="nav-number">12.4.</span> <span class="nav-text">http2</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些思考"><span class="nav-number">13.</span> <span class="nav-text">一些思考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">志遥</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1.0.0/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.4/dist/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.4"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=6.0.6"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G3UH8HdORUYIKeHXHP6J4lEM-gzGzoHsz", "PYiTH8lrUw7uQJ4Fm83lfIEA");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var newcounter = new Counter();
+              /* Set ACL */
+              var acl = new AV.ACL();
+              acl.setPublicReadAccess(true);
+              acl.setPublicWriteAccess(true);
+              newcounter.setACL(acl);
+              /* End Set ACL */
+              newcounter.set("title", title);
+              newcounter.set("url", url);
+              newcounter.set("time", 1);
+              newcounter.save(null, {
+                success: function(newcounter) {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                },
+                error: function(newcounter, error) {
+                  console.log('Failed to create');
+                }
+              });
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

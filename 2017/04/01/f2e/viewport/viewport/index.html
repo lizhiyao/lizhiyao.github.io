@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: 'RU6IFL6YOS',
+      apiKey: '59ab260b4dc669a506fbca973aca1231',
+      indexName: 'lizhiyao.github.io',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在之前的文章延迟，让你更幸福了吗？一文中，说明了解决移动端浏览器点击事件延迟的方法，其中提到了 viewport 元标签。viewport 通常被称作视口（视窗 ），是指设备的屏幕上能用来显示网页的那一块区域。简单的说，viewport 是严格等于浏览器的窗口的。在桌面浏览器中，viewport 就是浏览器窗口的宽度高度。但在移动端设备上就有点复杂。下面，我们就来仔细的聊一聊 viewport。">
+<meta name="keywords" content="前端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="作为前端开发，你了解 viewport 吗？">
+<meta property="og:url" content="http://lizhiyao.github.io/2017/04/01/f2e/viewport/viewport/index.html">
+<meta property="og:site_name" content="丁香园记">
+<meta property="og:description" content="在之前的文章延迟，让你更幸福了吗？一文中，说明了解决移动端浏览器点击事件延迟的方法，其中提到了 viewport 元标签。viewport 通常被称作视口（视窗 ），是指设备的屏幕上能用来显示网页的那一块区域。简单的说，viewport 是严格等于浏览器的窗口的。在桌面浏览器中，viewport 就是浏览器窗口的宽度高度。但在移动端设备上就有点复杂。下面，我们就来仔细的聊一聊 viewport。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://lizhiyao.github.io/2017/04/01/f2e/viewport/viewport/device%20pixel%20and%20css%20pixel.png">
+<meta property="og:image" content="http://lizhiyao.github.io/2017/04/01/f2e/viewport/viewport/dpi.jpg">
+<meta property="og:updated_time" content="2019-03-23T16:46:54.162Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="作为前端开发，你了解 viewport 吗？">
+<meta name="twitter:description" content="在之前的文章延迟，让你更幸福了吗？一文中，说明了解决移动端浏览器点击事件延迟的方法，其中提到了 viewport 元标签。viewport 通常被称作视口（视窗 ），是指设备的屏幕上能用来显示网页的那一块区域。简单的说，viewport 是严格等于浏览器的窗口的。在桌面浏览器中，viewport 就是浏览器窗口的宽度高度。但在移动端设备上就有点复杂。下面，我们就来仔细的聊一聊 viewport。">
+<meta name="twitter:image" content="http://lizhiyao.github.io/2017/04/01/f2e/viewport/viewport/device%20pixel%20and%20css%20pixel.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://lizhiyao.github.io/2017/04/01/f2e/viewport/viewport/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>作为前端开发，你了解 viewport 吗？ | 丁香园记</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96917833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-96917833-1');
+</script>
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5476bfd46e559a87ee9508b21a534eb9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">丁香园记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-resume">
+    <a href="/resume/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-file"></i> <br />简历</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+  
+  
+  
+    
+      
+    
+    <a href="https://github.com/lizhiyao" class="github-corner" target="_blank" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#222; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg>
+    
+      </a>
+    
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lizhiyao.github.io/2017/04/01/f2e/viewport/viewport/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="志遥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="丁香园记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">作为前端开发，你了解 viewport 吗？</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-01T20:05:38+08:00">2017-04-01</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/01/f2e/viewport/viewport/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2017/04/01/f2e/viewport/viewport/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/04/01/f2e/viewport/viewport/" class="leancloud_visitors" data-flag-title="作为前端开发，你了解 viewport 吗？">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在之前的文章<a href="https://lizhiyao.github.io/2017/03/03/300ms-delay-on-mobile-browsers/">延迟，让你更幸福了吗？</a>一文中，说明了解决移动端浏览器点击事件延迟的方法，其中提到了 <code>viewport</code> 元标签。<code>viewport</code> 通常被称作视口（视窗 ），是指设备的屏幕上能用来显示网页的那一块区域。简单的说，viewport 是严格等于浏览器的窗口的。在桌面浏览器中，viewport 就是浏览器窗口的宽度高度。但在移动端设备上就有点复杂。下面，我们就来仔细的聊一聊 <code>viewport</code>。</p>
+<h1 id="viewport-的由来"><a href="#viewport-的由来" class="headerlink" title="viewport 的由来"></a>viewport 的由来</h1><p><code>viewport</code> 元标签不是任何 web 标准的一部分。Mobile Safari 引入了 <code>viewport</code> 元标签来让 web 开发者控制视口的尺寸及比例。目前这种做法被绝大多数流行的移动浏览器所支持、被成千上万的站点所使用。</p>
+<h1 id="设备像素（device-pixel）-和-CSS-像素（css-pixel）"><a href="#设备像素（device-pixel）-和-CSS-像素（css-pixel）" class="headerlink" title="设备像素（device pixel） 和 CSS 像素（css pixel）"></a>设备像素（device pixel） 和 CSS 像素（css pixel）</h1><p>想弄清楚<code>viewport</code>，我们需要先了解设备像素、CSS 像素以及两者之间的差异。</p>
+<p>设备像素是物理概念，指的是设备中使用的物理像素。设备像素给出了任何设备的正式分辨率，比如 iPhone 5 的分辨率为 640 x 1136px。每个像素可以根据操作系统设置自己的颜色和亮度。正是这些设备像素的微小距离欺骗了我们肉眼看到的图像效果。</p>
+<p>CSS 像素是 Web 编程中的概念，指的是 CSS 样式代码中使用的逻辑像素，主要用来精确度量Web页面上的内容。在 CSS 规范中，长度单位可以分为两类，绝对(absolute)单位以及相对(relative)单位。px 是一个相对单位，相对的是设备像素(device pixel)。一般情况之下，CSS 像素称为与设备无关的像素(device-independent pixel)，简称 DIPs。</p>
+<p><img src="device pixel and css pixel.png" alt="device pixel and css pixel"></p>
+<h2 id="设备像素与-CSS-像素的换算"><a href="#设备像素与-CSS-像素的换算" class="headerlink" title="设备像素与 CSS 像素的换算"></a>设备像素与 CSS 像素的换算</h2><p>这就需要要谈到每英寸像素和设备像素比。</p>
+<h2 id="每英寸像素-屏幕密度（PPI-DPI-pixel-per-inch）"><a href="#每英寸像素-屏幕密度（PPI-DPI-pixel-per-inch）" class="headerlink" title="每英寸像素/屏幕密度（PPI/DPI, pixel per inch）"></a>每英寸像素/屏幕密度（PPI/DPI, pixel per inch）</h2><p>表示每英寸所拥有的设备像素(pixel)数目，数值越高，代表显示屏能够以越高的密度显示图像。PPI 的计算方式可以参考维基百科<a href="https://zh.wikipedia.org/wiki/%E6%AF%8F%E8%8B%B1%E5%AF%B8%E5%83%8F%E7%B4%A0" target="_blank" rel="noopener">每英寸像素</a></p>
+<h2 id="密度无关像素（density-independent-pixel）-设备独立像素（device-independent-pixel）"><a href="#密度无关像素（density-independent-pixel）-设备独立像素（device-independent-pixel）" class="headerlink" title="密度无关像素（density-independent pixel）/设备独立像素（device-independent pixel）"></a>密度无关像素（density-independent pixel）/设备独立像素（device-independent pixel）</h2><p>设备独立像素也称为密度无关像素，可以认为是计算机坐标系统中的一个点，这个点代表一个可以由程序使用的虚拟像素(比如说CSS像素)，然后由相关系统转换为物理像素。</p>
+<h2 id="设备像素比（DPR-device-pixel-ratio）"><a href="#设备像素比（DPR-device-pixel-ratio）" class="headerlink" title="设备像素比（DPR, device pixel ratio）"></a>设备像素比（DPR, device pixel ratio）</h2><p>以上计算出 PPI 是为了得到屏幕密度分界，获得默认缩放比例，即设备像素比。</p>
+<blockquote>
+<p>设备像素比 ＝ 物理像素 / 设备独立像素</p>
+</blockquote>
+<p>在JavaScript中，可以通过window.devicePixelRatio获取到当前设备的dpr。</p>
+<p><img src="dpi.jpg" alt="dpi"></p>
+<p>由上图可知，PPI 在120-160之间的手机被归为低密度手机，160-240被归为中密度，240-320被归为高密度，320以上被归为超高密度（有研究表明，人类肉眼能够分辨的最高像素点密度是 300 每英寸像素。超过300每英寸像素的屏幕被常常称为Retina 显示屏，这个概念最早由苹果公司于 2010 年推出 iPhone4 手机的时候提出）。</p>
+<h2 id="如何获取设备像素（屏幕尺寸）？"><a href="#如何获取设备像素（屏幕尺寸）？" class="headerlink" title="如何获取设备像素（屏幕尺寸）？"></a>如何获取设备像素（屏幕尺寸）？</h2><p>通常我们可以从 BOM(Browser Object Model) 中通过 <code>screen.width/screen.height</code> 获取。</p>
+<h2 id="如何获取窗口尺寸？"><a href="#如何获取窗口尺寸？" class="headerlink" title="如何获取窗口尺寸？"></a>如何获取窗口尺寸？</h2><p>如果你想知道用户访问的页面中有多少空间可以用来 CSS 布局，那么你需要获取浏览器窗口的内部尺寸。可以通过<code>window.innerWidth/window.innerHeight</code>来获取这些尺寸。注意度量的宽度和高度是包括滚动条的。它们也被视为内部窗口的一部分。（这大部分是因为历史原因造成的。）</p>
+<h2 id="如何获取-HTML-文档的尺寸？"><a href="#如何获取-HTML-文档的尺寸？" class="headerlink" title="如何获取 HTML 文档的尺寸？"></a>如何获取 HTML 文档的尺寸？</h2><p>可见宽度：<code>document.documentElement.clientWidth</code></p>
+<p>实际宽度：<code>document.documentElement.offsetWidth</code></p>
+<p>实际上，document.documentElement指的是 <code>&lt;html&gt;</code> 元素：即任何HTML文档的根元素。</p>
+<h1 id="layout-viewport-和-visual-viewport"><a href="#layout-viewport-和-visual-viewport" class="headerlink" title="layout viewport 和 visual viewport"></a>layout viewport 和 visual viewport</h1><p>当我们比较移动浏览器和桌面浏览器的时候，它们最显而易见的不同就是屏幕尺寸。当我们打开一个未针对移动端做任何 CSS 适配的页面时，我们会不由的慨叹：viewport 太窄了！viewport 并不能按照写给桌面浏览器的 CSS 正确布局。明显的解决方案是使 viewport 变宽一些。聪明的人们想到了一个解决办法：把 viewport 分成两部分：visual viewport和layout viewport。</p>
+<p>两个 viewport 都是以 CSS 像素度量的。但是当进行缩放（如果你放大，屏幕上的 CSS 像素会变少）的时候，visual viewport 的尺寸会发生变化，layout viewport 的尺寸仍然跟之前的一样。</p>
+<p>George Cummins在<a href="http://stackoverflow.com/questions/6333927/difference-between-visual-viewport-and-layout-viewport" target="_blank" rel="noopener">Stack Overflow</a>上对基本概念给出了最佳解释：</p>
+<blockquote>
+<p>把layout viewport想像成为一张不会变更大小或者形状的大图。现在想像你有一个小一些的框架，你通过它来看这张大<br>图。（译者：可以理解为「管中窥豹」）这个小框架的周围被不透明的材料所环绕，这掩盖了你所有的视线，只留这张大图<br>的一部分给你。你通过这个框架所能看到的大图的部分就是visual viewport。当你保持框架（缩小）来看整个图片的时<br>候，你可以不用管大图，或者你可以靠近一些（放大）只看局部。你也可以改变框架的方向，但是大图（layout<br>viewport）的大小和形状永远不会变。</p>
+</blockquote>
+<p>我们工作中所谓的 CSS 布局，尤其是百分比宽度，是以 layout viewport 做为参照系来计算的，它被认为要比 visual viewport 宽。即：<code>&lt;html&gt;</code> 元素在初始情况下用的是 layout viewport 的宽度，这使得站点布局的行为与其在桌面浏览器上的一样。</p>
+<blockquote>
+<p>layout viewport有多宽？每个浏览器都不一样。Safari iPhone为980px，Opera为850px，Android WebKit为<br>800px，最后IE为974px。</p>
+</blockquote>
+<h2 id="如何获取两个-viewport-的宽度？"><a href="#如何获取两个-viewport-的宽度？" class="headerlink" title="如何获取两个 viewport 的宽度？"></a>如何获取两个 viewport 的宽度？</h2><p>如果理解了上面讲述的内容，不难理解下面获取 viewport 的方式：</p>
+<p>layout viewport: <code>document.documentElement.clientWidth/document.documentElement.clientHeight</code></p>
+<p>visual viewport: <code>window.innerWidth/window.innerHeight</code></p>
+<h2 id="缩放比例（zoom-level）"><a href="#缩放比例（zoom-level）" class="headerlink" title="缩放比例（zoom level）"></a>缩放比例（zoom level）</h2><p>直接读出缩放比例是不可能的，但是你可以通过以 <code>screen.width/window.innerWidth</code> 来获取它的值。当然这只有在两个属性都被完美支持的情况下才有用。</p>
+<h1 id="viewport-meta-的详细作用"><a href="#viewport-meta-的详细作用" class="headerlink" title="viewport meta 的详细作用"></a>viewport meta 的详细作用</h1><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>width</td>
+<td>正整数或device-width</td>
+<td>定义视口的宽度，单位为像素</td>
+</tr>
+<tr>
+<td>height</td>
+<td>正整数或device-height</td>
+<td>定义视口的高度，单位为像素</td>
+</tr>
+<tr>
+<td>initial-scale</td>
+<td>[0.0-10.0]</td>
+<td>定义初始缩放值</td>
+</tr>
+<tr>
+<td>minimum-scale</td>
+<td>[0.0-10.0]</td>
+<td>定义缩小最小比例，它必须小于或等于maximum-scale设置</td>
+</tr>
+<tr>
+<td>maximum-scale</td>
+<td>[0.0-10.0]</td>
+<td>定义放大最大比例，它必须大于或等于minimum-scale设置</td>
+</tr>
+<tr>
+<td>user-scalable</td>
+<td>yes/no</td>
+<td>定义是否允许用户手动缩放页面，默认值yes</td>
+</tr>
+</tbody>
+</table>
+<p>在移动端 web 应用开发过程中，常用的设置为：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta <span class="attribute">name</span>=<span class="string">"viewport"</span> <span class="attribute">content</span>=<span class="string">"width=device-width"</span>&gt;</span><br><span class="line">&lt;meta <span class="attribute">name</span>=<span class="string">"viewport"</span> <span class="attribute">content</span>=<span class="string">"user-scalable=no"</span>&gt;</span><br><span class="line">&lt;meta <span class="attribute">name</span>=<span class="string">"viewport"</span> <span class="attribute">content</span>=<span class="string">"initial-scale=1,minimum-scale=1,maximum-scale=1"</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>还有一种常用的写法，就是根据自己设备的dpr来还原设备本来宽度，如假设手机devicePixelRatio为2，则设置</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta <span class="attribute">name</span>=<span class="string">"viewport"</span> <span class="attribute">content</span>=<span class="string">"user-scalable=no"</span>&gt;</span><br><span class="line">&lt;meta <span class="attribute">name</span>=<span class="string">"viewport"</span> <span class="attribute">content</span>=<span class="string">"initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5"</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>详情可参考<a href="https://lizhiyao.github.io/2017/03/03/300ms-delay-on-mobile-browsers/">延迟，让你更幸福了吗？</a></p>
+<h1 id="阿里-flexible-js-的原理"><a href="#阿里-flexible-js-的原理" class="headerlink" title="阿里 flexible.js 的原理"></a>阿里 flexible.js 的原理</h1><p>flexible.js 的一生只做了三件事：</p>
+<ul>
+<li>动态改写 <code>&lt;meta&gt;</code> 标签</li>
+<li>给 <code>&lt;html&gt;</code> 元素添加 <code>data-dpr</code> 属性，并且动态改写 <code>data-dpr</code> 的值</li>
+<li>给 <code>&lt;html&gt;</code> 元素添加 <code>font-size</code> 属性，并且动态改写 <code>font-size</code> 的值</li>
+</ul>
+<p>flexible 本质上就是通过 JavaScript 来动态改写 meta 标签。在正确引入 <code>flexible.js</code> 后，会在 <code>&lt;html&gt;</code> 元素上增加一个 <code>data-dpr</code> 属性，以及一个 <code>font-size</code> 样式。JavaScript 会根据不同的设备添加不同的 <code>data-dpr</code> 值，比如说 2 或者 3，同时会给 <code>&lt;html&gt;</code> 加上对应的 <code>font-size</code> 的值，比如说75px。</p>
+<p>如此一来，页面中的元素，都可以通过 rem 单位来设置大小。他们会根据 html 元素的 <code>font-size</code> 值做相应的计算，从而实现屏幕的适配效果。</p>
+<p>实际上，如果仅需要做到适配移动端页面，只需要动态改变 <code>&lt;html&gt;</code> 元素上的 <code>font-size</code> 样式即可。那么为什么 <code>flexible.js</code> 会在 <code>&lt;html&gt;</code> 元素上增加一个 <code>data-dpr</code> 属性呢？原因如下：</p>
+<blockquote>
+<p>我们不希望文本在Retina屏幕下变小，另外，我们希望在大屏手机上看到更多文本，以及，现在绝大多数的字体文件都自带<br>一些点阵尺寸，通常是16px和24px，所以我们不希望出现13px和15px这样的奇葩尺寸。</p>
+</blockquote>
+<p>如果 <code>&lt;html&gt;</code> 元素有了 <code>data-dpr</code> 属性，实现对文本字体的单独设置就变得很轻松。只需要如下代码：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">1rem</span>; </span><br><span class="line">    <span class="attribute">height</span>: <span class="number">0.4rem</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">12px</span>; <span class="comment">// 默认写上dpr为1的fontSize</span></span><br><span class="line">&#125;</span><br><span class="line">[data-dpr=<span class="string">"2"</span>] <span class="selector-tag">div</span> &#123;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">24px</span>;</span><br><span class="line">&#125;</span><br><span class="line">[data-dpr=<span class="string">"3"</span>] <span class="selector-tag">div</span> &#123;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">36px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注： 在 Flexible 中，只对 iOS 设备进行 dpr 的判断，对于 Android 系列，始终认为其 dpr 为 1。</p>
+</blockquote>
+<h1 id="移动端适配该怎么做？"><a href="#移动端适配该怎么做？" class="headerlink" title="移动端适配该怎么做？"></a>移动端适配该怎么做？</h1><p>页面布局：</p>
+<ul>
+<li>基于 CSS 盒模型、绝对/相对定位、元素浮动的传统流式布局</li>
+<li>Flex 布局</li>
+<li>Grid 布局</li>
+</ul>
+<p>具体页面元素的大小：</p>
+<ul>
+<li>限定元素高度，元素宽度 auto</li>
+<li>基于/类似手淘的 flexible.js，使用 rem</li>
+</ul>
+<p>目前，笔者仅在一个 web app 项目中使用了类 flexible.js 的方案。</p>
+<p>坦白的说，我对每种方案没有特别的喜好。我的移动端适配的思路为：灵活运用各种技术手段，在达到自己和产品经理都满意的效果基础上，尽可能的给用户最好的视觉体验即可。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>设计师和前端工程师之间的设计稿如何协同呢？</p>
+<p>一般由设计师按照设备像素为单位制作设计稿。前端工程师参照相关的设备像素比，进行换算以及编码。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Mobile/Viewport_meta_tag" target="_blank" rel="noopener">在移动浏览器中使用viewport元标签控制布局</a></li>
+<li><a href="http://www.quirksmode.org/mobile/viewports.html" target="_blank" rel="noopener">A tale of two viewports — part one</a></li>
+<li><a href="http://www.quirksmode.org/mobile/viewports2.html" target="_blank" rel="noopener">A tale of two viewports — part two</a></li>
+<li><a href="http://www.jianshu.com/p/af6dad66e49a" target="_blank" rel="noopener">前端工程师需要明白的「像素」</a></li>
+<li><a href="https://isux.tencent.com/mobile-development-essential-knowledge.html" target="_blank" rel="noopener">移动终端开发必备知识</a></li>
+<li><a href="https://github.com/amfe/article/issues/17" target="_blank" rel="noopener">使用Flexible实现手淘H5页面的终端适配</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/dxy_notes_qrcode.jpg" alt="志遥 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>微信扫一扫，我在丁香园记公众号等你</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端/" rel="tag"># 前端</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/31/f2e/the-front-end-of-my-eyes/the-front-end-of-my-eyes/" rel="next" title="我眼中的前端">
+                <i class="fa fa-chevron-left"></i> 我眼中的前端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/06/f2e/2017-eleme-fe-share-meeting/" rel="prev" title="2017-eleme-fe-share-meeting">
+                2017-eleme-fe-share-meeting <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a>
+    <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+    <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a class="bds_count" data-cmd="count"></a>
+  </div>
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "2",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "share": {
+        "bdSize": "16",
+        "bdStyle": "0"
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="志遥" />
+            
+              <p class="site-author-name" itemprop="name">志遥</p>
+              <p class="site-description motion-element" itemprop="description">Find what u really love, and let it kill U ~</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">76</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">41</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/lizhiyao" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.instagram.com/_lizhiyao/" target="_blank" title="Instagram" rel="external nofollow"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dancerlzy@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/dancerlzy/" target="_blank" title="知乎" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://juejin.im/user/57b15330c4c971005487322f" target="_blank" title="掘金" rel="external nofollow"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                志遥的朋友们
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://zhiyaoli.com/" title="志遥里" target="_blank">志遥里</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#viewport-的由来"><span class="nav-number">1.</span> <span class="nav-text">viewport 的由来</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设备像素（device-pixel）-和-CSS-像素（css-pixel）"><span class="nav-number">2.</span> <span class="nav-text">设备像素（device pixel） 和 CSS 像素（css pixel）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#设备像素与-CSS-像素的换算"><span class="nav-number">2.1.</span> <span class="nav-text">设备像素与 CSS 像素的换算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#每英寸像素-屏幕密度（PPI-DPI-pixel-per-inch）"><span class="nav-number">2.2.</span> <span class="nav-text">每英寸像素/屏幕密度（PPI/DPI, pixel per inch）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#密度无关像素（density-independent-pixel）-设备独立像素（device-independent-pixel）"><span class="nav-number">2.3.</span> <span class="nav-text">密度无关像素（density-independent pixel）/设备独立像素（device-independent pixel）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设备像素比（DPR-device-pixel-ratio）"><span class="nav-number">2.4.</span> <span class="nav-text">设备像素比（DPR, device pixel ratio）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何获取设备像素（屏幕尺寸）？"><span class="nav-number">2.5.</span> <span class="nav-text">如何获取设备像素（屏幕尺寸）？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何获取窗口尺寸？"><span class="nav-number">2.6.</span> <span class="nav-text">如何获取窗口尺寸？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何获取-HTML-文档的尺寸？"><span class="nav-number">2.7.</span> <span class="nav-text">如何获取 HTML 文档的尺寸？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#layout-viewport-和-visual-viewport"><span class="nav-number">3.</span> <span class="nav-text">layout viewport 和 visual viewport</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何获取两个-viewport-的宽度？"><span class="nav-number">3.1.</span> <span class="nav-text">如何获取两个 viewport 的宽度？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缩放比例（zoom-level）"><span class="nav-number">3.2.</span> <span class="nav-text">缩放比例（zoom level）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#viewport-meta-的详细作用"><span class="nav-number">4.</span> <span class="nav-text">viewport meta 的详细作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#阿里-flexible-js-的原理"><span class="nav-number">5.</span> <span class="nav-text">阿里 flexible.js 的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#移动端适配该怎么做？"><span class="nav-number">6.</span> <span class="nav-text">移动端适配该怎么做？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最后"><span class="nav-number">7.</span> <span class="nav-text">最后</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">志遥</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1.0.0/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.4/dist/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.4"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=6.0.6"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G3UH8HdORUYIKeHXHP6J4lEM-gzGzoHsz", "PYiTH8lrUw7uQJ4Fm83lfIEA");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var newcounter = new Counter();
+              /* Set ACL */
+              var acl = new AV.ACL();
+              acl.setPublicReadAccess(true);
+              acl.setPublicWriteAccess(true);
+              newcounter.setACL(acl);
+              /* End Set ACL */
+              newcounter.set("title", title);
+              newcounter.set("url", url);
+              newcounter.set("time", 1);
+              newcounter.save(null, {
+                success: function(newcounter) {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                },
+                error: function(newcounter, error) {
+                  console.log('Failed to create');
+                }
+              });
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
